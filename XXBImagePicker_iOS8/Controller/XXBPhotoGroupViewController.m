@@ -11,6 +11,9 @@
 #import "XXBPhotoCollectionViewController.h"
 @import Photos;
 @interface XXBPhotoGroupViewController ()<PHPhotoLibraryChangeObserver>
+{
+    NSInteger _photoInRow;
+}
 @property(nonatomic , strong) NSArray *collectionsFetchResults;
 @property(nonatomic , strong) NSArray *collectionsLocalizedTitles;
 @property(nonatomic , strong) XXBPhotoCollectionViewController *photoCollectionViewController;
@@ -126,6 +129,22 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    if (indexPath.section == 0)
+    {
+        PHFetchOptions *options = [[PHFetchOptions alloc] init];
+        options.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"creationDate" ascending:YES]];
+        PHFetchResult *countResult = [PHAsset fetchAssetsWithOptions:options];
+        self.photoCollectionViewController.assetsFetchResults = countResult;
+    }
+    else
+    {
+        PHAssetCollection *assetCollection = self.collectionsFetchResults[indexPath.section -1 ][indexPath.row];
+        PHFetchResult *countResult = [PHAsset fetchAssetsInAssetCollection:assetCollection options:nil];
+        self.photoCollectionViewController.assetsFetchResults = countResult;
+    }
+    [self.navigationController pushViewController:self.photoCollectionViewController animated:YES];
+
+    
 }
 #pragma mark - PHPhotoLibraryChangeObserver
 
@@ -184,5 +203,52 @@
     }
     self.collectionsFetchResults = collectionsArray;
 }
-#pragma mark
+#pragma mark - 懒加载
+- (void)setPhotoInRow:(NSInteger)photoInRow
+{
+    _photoInRow = photoInRow;
+    _photoCollectionViewController = nil;
+}
+
+- (NSInteger)photoInRow
+{
+    if (_photoInRow == 0)
+    {
+        if ([self isIpad])
+        {
+            _photoInRow = 6;
+        }
+        else
+        {
+            _photoInRow = 4;
+        }
+    }
+    return _photoInRow;
+}
+- (XXBPhotoCollectionViewController *)photoCollectionViewController
+{
+    if (_photoCollectionViewController == nil)
+    {
+        UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc] init];
+        CGFloat screenWidth = MIN([UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height);
+        layout.minimumInteritemSpacing = 4;
+        layout.minimumLineSpacing = 4;
+        CGFloat itemWidth = (screenWidth - layout.minimumInteritemSpacing)/(CGFloat)self.photoInRow - layout.minimumInteritemSpacing;
+        layout.itemSize = CGSizeMake(itemWidth, itemWidth);
+        layout.sectionInset = UIEdgeInsetsMake(layout.minimumInteritemSpacing, layout.minimumInteritemSpacing, layout.minimumLineSpacing, layout.minimumInteritemSpacing);
+        layout.footerReferenceSize = CGSizeMake(300.0f, 50.0f);
+        _photoCollectionViewController  = [[XXBPhotoCollectionViewController alloc] initWithCollectionViewLayout:layout];
+    }
+    return _photoCollectionViewController;
+}
+/**
+ *  判断是否是ipad
+ *
+ *  @return YES 是
+ */
+- (BOOL)isIpad
+{
+    NSString* deviceType = [UIDevice currentDevice].model;
+    return [deviceType rangeOfString:@"iPad"].length > 0;
+}
 @end

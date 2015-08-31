@@ -7,7 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+@import Photos;
 
 @interface XXBPhotoCollectionViewController : UICollectionViewController
-
+@property (strong) PHFetchResult *assetsFetchResults;
+@property (strong) PHAssetCollection *assetCollection;
 @end
