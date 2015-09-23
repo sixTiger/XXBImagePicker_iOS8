@@ -10,6 +10,6 @@
 @import Photos;
 
 @interface XXBPhotoCollectionViewController : UICollectionViewController
-@property (strong) PHFetchResult *assetsFetchResults;
-@property (strong) PHAssetCollection *assetCollection;
+@property (nonatomic, strong) PHFetchResult *assetsFetchResults;
+@property (nonatomic, strong) PHAssetCollection *assetCollection;
 @end

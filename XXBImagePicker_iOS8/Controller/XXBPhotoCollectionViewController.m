@@ -77,7 +77,16 @@ static CGSize AssetGridThumbnailSize;
     self.collectionView.backgroundColor = [UIColor colorWithRed:232/255.0 green:232/255.0 blue:232/255.0 alpha:1.0];
     self.collectionView.alwaysBounceVertical = YES;
 }
-
+- (void)setAssetsFetchResults:(PHFetchResult *)assetsFetchResults
+{
+    _assetsFetchResults = assetsFetchResults;
+    [self.collectionView reloadData];
+}
+- (void)setAssetCollection:(PHAssetCollection *)assetCollection
+{
+    _assetCollection = assetCollection;
+    [self.collectionView reloadData];
+}
 #pragma mark - PHPhotoLibraryChangeObserver
 
 - (void)photoLibraryDidChange:(PHChange *)changeInstance

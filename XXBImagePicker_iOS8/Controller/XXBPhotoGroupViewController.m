@@ -9,7 +9,7 @@
 #import "XXBPhotoGroupViewController.h"
 #import "XXBImagePickerTableViewCell.h"
 #import "XXBPhotoCollectionViewController.h"
-@import Photos;
+#import <Photos/Photos.h>
 @interface XXBPhotoGroupViewController ()<PHPhotoLibraryChangeObserver>
 {
     NSInteger _photoInRow;
