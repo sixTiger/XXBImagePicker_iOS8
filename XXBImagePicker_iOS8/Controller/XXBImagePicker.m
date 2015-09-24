@@ -26,7 +26,16 @@
     if (_photoGroupViewController == nil)
     {
         _photoGroupViewController = [[XXBPhotoGroupViewController alloc] init];
+        _photoGroupViewController.selectPhotoModel = self.selectPhotoModel;
     }
     return _photoGroupViewController;
+}
+- (NSMutableArray *)selectPhotoModel
+{
+    if(_selectPhotoModel == nil)
+    {
+        _selectPhotoModel = [NSMutableArray array];
+    }
+    return _selectPhotoModel;
 }
 @end

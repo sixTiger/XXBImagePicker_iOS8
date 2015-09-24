@@ -47,11 +47,11 @@ typedef enum : NSUInteger {
 /**
  *  如果想在打开的时候原来选中的图片还是选中的话需要设置 selectPhotoALAssets
  *
- *  里边放的是 XXBPhotoAlasetModle 模型
+ *  里边放的是 XXBPhotoModle 模型
  *
- *  原来选中的photo的ALAsset 默认为空
+ *  原来选中的photo的相关信息 默认为空
  */
-@property(nonatomic , strong)NSMutableArray *selectPhotoALAssets;
+@property(nonatomic , strong)NSMutableArray *selectPhotoModel;
 /**
  *  是否显示数字标签
  */

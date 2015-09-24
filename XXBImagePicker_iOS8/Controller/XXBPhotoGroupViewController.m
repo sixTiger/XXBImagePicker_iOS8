@@ -14,11 +14,15 @@
 {
     NSInteger _photoInRow;
 }
-@property(nonatomic , strong) NSArray *collectionsFetchResults;
-@property(nonatomic , strong) NSArray *collectionsLocalizedTitles;
+@property(nonatomic , strong) NSArray *photoSectionArray;
+@property(nonatomic , strong) NSArray *photoSectionTitles;
 @property(nonatomic , strong) XXBPhotoCollectionViewController *photoCollectionViewController;
-
 @property (strong) PHCachingImageManager *imageManager;
+
+@property(nonatomic , strong)NSArray *photoRealSectionArray;
+
+
+@property(nonatomic , strong)NSMutableArray *photoGroupArray;
 @end
 
 @implementation XXBPhotoGroupViewController
@@ -38,14 +42,9 @@ static NSString *photoGroupViewCellID = @"XXBPhotoGroupViewCellID";
 - (void)p_setup
 {
     [self setupItems];
+    [self p_excludeEmptyCollections];
     [self.tableView registerClass:[XXBPhotoGroupTableViewCell class] forCellReuseIdentifier:photoGroupViewCellID];
     self.tableView.rowHeight = 60;
-    PHFetchResult *smartAlbums = [PHAssetCollection fetchAssetCollectionsWithType:PHAssetCollectionTypeSmartAlbum subtype:PHAssetCollectionSubtypeAlbumRegular options:nil];
-    PHFetchOptions *option = [[PHFetchOptions alloc] init];
-    PHFetchResult *topLevelUserCollections = [PHCollectionList fetchTopLevelUserCollectionsWithOptions:option];
-    self.collectionsFetchResults = @[smartAlbums, topLevelUserCollections];
-    [self p_excludeEmptyCollections];
-    self.collectionsLocalizedTitles = @[NSLocalizedString(@"Smart Albums", @""), NSLocalizedString(@"Albums", @"")];
     [[PHPhotoLibrary sharedPhotoLibrary] registerChangeObserver:self];
 }
 - (void)setupItems
@@ -59,10 +58,13 @@ static NSString *photoGroupViewCellID = @"XXBPhotoGroupViewCellID";
     }];
 }
 #pragma mark - tableView的相关操作
-
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+    return self.photoSectionTitles[section];
+}
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return 1 + self.collectionsFetchResults.count;
+    return 1 + self.photoSectionArray.count;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -74,7 +76,7 @@ static NSString *photoGroupViewCellID = @"XXBPhotoGroupViewCellID";
     }
     else
     {
-        numberOfRows = [self.collectionsFetchResults[section - 1] count];
+        numberOfRows = [self.photoSectionArray[section - 1] count];
     }
     return numberOfRows;
 }
@@ -86,14 +88,14 @@ static NSString *photoGroupViewCellID = @"XXBPhotoGroupViewCellID";
     if (indexPath.section == 0)
     {
         PHFetchOptions *options = [[PHFetchOptions alloc] init];
-                options.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"creationDate" ascending:YES]];
+        options.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"creationDate" ascending:YES]];
         PHFetchResult *countResult = [PHAsset fetchAssetsWithOptions:options];
         PHAssetCollection *assetCollection = [PHAssetCollection transientAssetCollectionWithAssetFetchResult:countResult title:@"所有照片"];
         cell.assetCollection = assetCollection;
     }
     else
     {
-        cell.assetCollection = self.collectionsFetchResults[indexPath.section - 1][indexPath.row];
+        cell.assetCollection = self.photoSectionArray[indexPath.section - 1][indexPath.row];
     }
     
     return cell;
@@ -110,12 +112,12 @@ static NSString *photoGroupViewCellID = @"XXBPhotoGroupViewCellID";
     }
     else
     {
-        PHAssetCollection *assetCollection = self.collectionsFetchResults[indexPath.section -1 ][indexPath.row];
+        PHAssetCollection *assetCollection = self.photoSectionArray[indexPath.section -1 ][indexPath.row];
         PHFetchResult *countResult = [PHAsset fetchAssetsInAssetCollection:assetCollection options:nil];
         self.photoCollectionViewController.assetsFetchResults = countResult;
     }
     [self.navigationController pushViewController:self.photoCollectionViewController animated:YES];
-
+    
     
 }
 #pragma mark - PHPhotoLibraryChangeObserver
@@ -125,20 +127,22 @@ static NSString *photoGroupViewCellID = @"XXBPhotoGroupViewCellID";
     dispatch_async(dispatch_get_main_queue(), ^{
         
         NSMutableArray *updatedCollectionsFetchResults = nil;
-        for (PHFetchResult *collectionsFetchResult in self.collectionsFetchResults)
+        for (PHFetchResult *collectionsFetchResult in self.photoRealSectionArray)
         {
             PHFetchResultChangeDetails *changeDetails = [changeInstance changeDetailsForFetchResult:collectionsFetchResult];
             if (changeDetails)
             {
                 if (!updatedCollectionsFetchResults)
                 {
-                    updatedCollectionsFetchResults = [self.collectionsFetchResults mutableCopy];
+                    updatedCollectionsFetchResults = [self.photoRealSectionArray mutableCopy];
                 }
-                [updatedCollectionsFetchResults replaceObjectAtIndex:[self.collectionsFetchResults indexOfObject:collectionsFetchResult] withObject:[changeDetails fetchResultAfterChanges]];
+                [updatedCollectionsFetchResults replaceObjectAtIndex:[self.photoRealSectionArray indexOfObject:collectionsFetchResult] withObject:[changeDetails fetchResultAfterChanges]];
             }
         }
-        if (updatedCollectionsFetchResults) {
-            self.collectionsFetchResults = updatedCollectionsFetchResults;
+        if (updatedCollectionsFetchResults)
+        {
+            self.photoRealSectionArray = updatedCollectionsFetchResults;
+            [self p_excludeEmptyCollections];
             [self.tableView reloadData];
         }
         
@@ -147,33 +151,35 @@ static NSString *photoGroupViewCellID = @"XXBPhotoGroupViewCellID";
 /**
  *  对相册进行优化排序
  */
-- (void)p_excludeEmptyCollections {
-    NSMutableArray *collectionsArray = [NSMutableArray array];
-    for (PHFetchResult *result in self.collectionsFetchResults)
+- (void)p_excludeEmptyCollections
+{
+    NSMutableArray *photoSectionArray = [NSMutableArray array];
+    for (PHFetchResult *result in self.photoRealSectionArray)
     {
         NSMutableArray *filteredCollections = [NSMutableArray array];
-        [result enumerateObjectsUsingBlock:^(PHAssetCollection *assetCollection, NSUInteger idx, BOOL *stop) {
-            PHFetchOptions *options = [[PHFetchOptions alloc] init];
-            /**
-             *  只要照片
-             */
-            [options setPredicate:[NSPredicate predicateWithFormat:@"mediaType == %d", PHAssetMediaTypeImage]];
-            PHFetchResult *countResult = [PHAsset fetchAssetsInAssetCollection:assetCollection options:options];
-            if (countResult.count > 0)
-            {
-                if (!([assetCollection.localizedTitle isEqualToString:@"All Photos"] || [assetCollection.localizedTitle isEqualToString:@"所有照片"]))
-                {
-                    [filteredCollections addObject:assetCollection];
-                    NSLog(@"%@",assetCollection.localizedTitle);
-                }
-            }
-        }];
+        [result enumerateObjectsUsingBlock:^(PHAssetCollection *assetCollection, NSUInteger idx, BOOL *stop)
+         {
+             PHFetchOptions *options = [[PHFetchOptions alloc] init];
+             /**
+              *  只要照片
+              */
+             [options setPredicate:[NSPredicate predicateWithFormat:@"mediaType == %d", PHAssetMediaTypeImage]];
+             PHFetchResult *countResult = [PHAsset fetchAssetsInAssetCollection:assetCollection options:options];
+             if (countResult.count > 0)
+             {
+                 if (!([assetCollection.localizedTitle isEqualToString:@"All Photos"] || [assetCollection.localizedTitle isEqualToString:@"所有照片"]))
+                 {
+                     [filteredCollections addObject:assetCollection];
+                     NSLog(@"%@",assetCollection.localizedTitle);
+                 }
+             }
+         }];
         if (filteredCollections.count > 0)
         {
-            [collectionsArray addObject:filteredCollections];
+            [photoSectionArray addObject:filteredCollections];
         }
     }
-    self.collectionsFetchResults = collectionsArray;
+    self.photoSectionArray = photoSectionArray;
 }
 #pragma mark - 懒加载
 - (void)setPhotoInRow:(NSInteger)photoInRow
@@ -222,5 +228,32 @@ static NSString *photoGroupViewCellID = @"XXBPhotoGroupViewCellID";
 {
     NSString* deviceType = [UIDevice currentDevice].model;
     return [deviceType rangeOfString:@"iPad"].length > 0;
+}
+- (NSArray *)photoRealSectionArray
+{
+    if (_photoRealSectionArray == nil)
+    {
+        PHFetchResult *smartAlbums = [PHAssetCollection fetchAssetCollectionsWithType:PHAssetCollectionTypeSmartAlbum subtype:PHAssetCollectionSubtypeAlbumRegular options:nil];
+        PHFetchOptions *option = [[PHFetchOptions alloc] init];
+        PHFetchResult *topLevelUserCollections = [PHCollectionList fetchTopLevelUserCollectionsWithOptions:option];
+        _photoRealSectionArray = @[smartAlbums, topLevelUserCollections];
+    }
+    return _photoRealSectionArray;
+}
+- (NSArray *)photoSectionTitles
+{
+    if (_photoSectionTitles == nil)
+    {
+        self.photoSectionTitles = @[@"所有照片",@"系统相册",@"个人相册"];
+    }
+    return _photoSectionTitles;
+}
+- (NSMutableArray *)photoGroupArray
+{
+    if (_photoGroupArray == nil)
+    {
+        _photoGroupArray = [NSMutableArray array];
+    }
+    return _photoGroupArray;
 }
 @end

@@ -18,9 +18,9 @@
  */
 @property(nonatomic , assign)NSInteger          photoInRow;
 /**
- *  选中的相册的ALAssets
+ *  选中的相册的XXBPhotoModel
  */
-@property(nonatomic , strong)NSMutableArray 	*selectPhotoALAssets;
+@property(nonatomic , strong)NSMutableArray 	*selectPhotoModel;
 /**
  *  是否显示数字标签
  */
@@ -33,5 +33,4 @@
  *  是否显示所有的照片
  */
 @property(nonatomic , assign)BOOL               showAllPhoto;
-@property(nonatomic , strong)NSArray            *dataSouceArray;
 @end
