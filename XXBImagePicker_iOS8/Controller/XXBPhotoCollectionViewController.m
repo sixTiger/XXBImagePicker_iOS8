@@ -8,6 +8,7 @@
 
 #import "XXBPhotoCollectionViewController.h"
 #import <UIKit/UIKit.h>
+#import "XXBPicShowViewController.h"
 
 @implementation NSIndexSet (Convenience)
 - (NSArray *)aapl_indexPathsFromIndexesWithSection:(NSUInteger)section {
@@ -136,28 +137,32 @@ static CGSize AssetGridThumbnailSize;
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     UICollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:CellReuseIdentifier forIndexPath:indexPath];
-    // Increment the cell's tag
     NSInteger currentTag = cell.tag + 1;
     cell.tag = currentTag;
-    
     PHAsset *asset = self.assetsFetchResults[indexPath.item];
     [self.imageManager requestImageForAsset:asset
                                  targetSize:AssetGridThumbnailSize
-                                contentMode:PHImageContentModeAspectFill
+                                contentMode:PHImageContentModeAspectFit
                                     options:nil
                               resultHandler:^(UIImage *result, NSDictionary *info) {
-                                  
-                                  // Only update the thumbnail if the cell tag hasn't changed. Otherwise, the cell has been re-used.
                                   if (cell.tag == currentTag)
                                   {
-                                      cell.backgroundView  = [[UIImageView alloc] initWithImage:result];
+                                      UIImageView *imageView = [[UIImageView alloc] initWithImage:result];
+                                      imageView.contentMode = UIViewContentModeScaleAspectFill;
+                                      imageView.clipsToBounds = YES;
+                                      cell.backgroundView  = imageView;
                                   }
-                                  
                               }];
     
     return cell;
 }
-
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    XXBPicShowViewController *picShowViewController = [[XXBPicShowViewController alloc] init];
+    PHAsset *asset = self.assetsFetchResults[indexPath.item];
+    picShowViewController.asset = asset;
+    [self.navigationController pushViewController:picShowViewController animated:YES];
+}
 #pragma mark - UIScrollViewDelegate
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView

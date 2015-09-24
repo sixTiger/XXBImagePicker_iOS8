@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		620BC66C1BB2A5BD000278E7 /* XXBPicShowViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 620BC66B1BB2A5BD000278E7 /* XXBPicShowViewController.m */; settings = {ASSET_TAGS = (); }; };
 		62A2E4EB1B8FEFF500CD1DDF /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 62A2E4EA1B8FEFF500CD1DDF /* main.m */; };
 		62A2E4EE1B8FEFF500CD1DDF /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 62A2E4ED1B8FEFF500CD1DDF /* AppDelegate.m */; };
 		62A2E4F11B8FEFF500CD1DDF /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 62A2E4F01B8FEFF500CD1DDF /* ViewController.m */; };
@@ -21,6 +22,7 @@
 		62A2E5231B8FF7B700CD1DDF /* XXBPhotoGroupViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 62A2E5221B8FF7B700CD1DDF /* XXBPhotoGroupViewController.m */; };
 		62A2E5261B9032AB00CD1DDF /* XXBImagePickerTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 62A2E5251B9032AB00CD1DDF /* XXBImagePickerTableViewCell.m */; };
 		62A2E5291B903F1F00CD1DDF /* XXBPhotoCollectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 62A2E5281B903F1F00CD1DDF /* XXBPhotoCollectionViewController.m */; };
+		62DC5DE31BB39D7C0083F079 /* XXBPicShowView.m in Sources */ = {isa = PBXBuildFile; fileRef = 62DC5DE21BB39D7C0083F079 /* XXBPicShowView.m */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -34,6 +36,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		620BC66A1BB2A5BD000278E7 /* XXBPicShowViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XXBPicShowViewController.h; sourceTree = "<group>"; };
+		620BC66B1BB2A5BD000278E7 /* XXBPicShowViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XXBPicShowViewController.m; sourceTree = "<group>"; };
 		62A2E4E51B8FEFF500CD1DDF /* XXBImagePicker_iOS8.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = XXBImagePicker_iOS8.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		62A2E4E91B8FEFF500CD1DDF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		62A2E4EA1B8FEFF500CD1DDF /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -60,6 +64,8 @@
 		62A2E5251B9032AB00CD1DDF /* XXBImagePickerTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XXBImagePickerTableViewCell.m; sourceTree = "<group>"; };
 		62A2E5271B903F1F00CD1DDF /* XXBPhotoCollectionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XXBPhotoCollectionViewController.h; sourceTree = "<group>"; };
 		62A2E5281B903F1F00CD1DDF /* XXBPhotoCollectionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XXBPhotoCollectionViewController.m; sourceTree = "<group>"; };
+		62DC5DE11BB39D7C0083F079 /* XXBPicShowView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XXBPicShowView.h; sourceTree = "<group>"; };
+		62DC5DE21BB39D7C0083F079 /* XXBPicShowView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XXBPicShowView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -161,6 +167,8 @@
 				62A2E5221B8FF7B700CD1DDF /* XXBPhotoGroupViewController.m */,
 				62A2E5271B903F1F00CD1DDF /* XXBPhotoCollectionViewController.h */,
 				62A2E5281B903F1F00CD1DDF /* XXBPhotoCollectionViewController.m */,
+				620BC66A1BB2A5BD000278E7 /* XXBPicShowViewController.h */,
+				620BC66B1BB2A5BD000278E7 /* XXBPicShowViewController.m */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -175,6 +183,8 @@
 		62A2E5161B8FF49500CD1DDF /* View */ = {
 			isa = PBXGroup;
 			children = (
+				62DC5DE11BB39D7C0083F079 /* XXBPicShowView.h */,
+				62DC5DE21BB39D7C0083F079 /* XXBPicShowView.m */,
 				62A2E5241B9032AB00CD1DDF /* XXBImagePickerTableViewCell.h */,
 				62A2E5251B9032AB00CD1DDF /* XXBImagePickerTableViewCell.m */,
 			);
@@ -298,8 +308,10 @@
 				62A2E5171B8FF49500CD1DDF /* XXBImagePicker.m in Sources */,
 				62A2E5201B8FF71000CD1DDF /* MBProgressHUD.m in Sources */,
 				62A2E5291B903F1F00CD1DDF /* XXBPhotoCollectionViewController.m in Sources */,
+				620BC66C1BB2A5BD000278E7 /* XXBPicShowViewController.m in Sources */,
 				62A2E51E1B8FF71000CD1DDF /* MBProgressHUD+XXB.m in Sources */,
 				62A2E4F11B8FEFF500CD1DDF /* ViewController.m in Sources */,
+				62DC5DE31BB39D7C0083F079 /* XXBPicShowView.m in Sources */,
 				62A2E4EE1B8FEFF500CD1DDF /* AppDelegate.m in Sources */,
 				62A2E4EB1B8FEFF500CD1DDF /* main.m in Sources */,
 				62A2E5261B9032AB00CD1DDF /* XXBImagePickerTableViewCell.m in Sources */,
