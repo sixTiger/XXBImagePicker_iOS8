@@ -41,7 +41,6 @@
  */
 - (void)p_show2XPhoto
 {
-    
     CGFloat scale = [UIScreen mainScreen].scale;
     CGSize targetSize = CGSizeMake(CGRectGetWidth(self.picShowView.bounds) * scale, CGRectGetHeight(self.picShowView.bounds) * scale);
     PHImageRequestOptions *options = [[PHImageRequestOptions alloc] init];
@@ -64,14 +63,14 @@
  */
 - (void)p_showRealPhoto
 {
-    
     PHImageRequestOptions *options = [[PHImageRequestOptions alloc] init];
     // Download from cloud if necessary
     options.networkAccessAllowed = YES;
     options.progressHandler = ^(double progress, NSError *error, BOOL *stop, NSDictionary *info) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            //            self.progressView.progress = progress;
-            //            self.progressView.hidden = (progress <= 0.0 || progress >= 1.0);
+            //   如果没有图片的话去网络拉去图片
+            //   self.progressView.progress = progress;
+            //   self.progressView.hidden = (progress <= 0.0 || progress >= 1.0);
         });
     };
     [[PHImageManager defaultManager] requestImageDataForAsset:self.asset options:options resultHandler:^(NSData * _Nullable imageData, NSString * _Nullable dataUTI, UIImageOrientation orientation, NSDictionary * _Nullable info) {
