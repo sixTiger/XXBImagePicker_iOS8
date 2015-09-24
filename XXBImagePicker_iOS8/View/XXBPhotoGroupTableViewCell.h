@@ -7,9 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
+@import Photos;
 
-@interface XXBImagePickerTableViewCell : UITableViewCell
+@interface XXBPhotoGroupTableViewCell : UITableViewCell
 @property(nonatomic , strong)UIImage *iconImage;
 @property(nonatomic , copy)NSString *title;
 @property(nonatomic , copy)NSString *subTitle;
+/**
+ *  照片组的相关信息
+ */
+@property(nonatomic , strong)PHAssetCollection *assetCollection;
 @end

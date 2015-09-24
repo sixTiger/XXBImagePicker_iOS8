@@ -18,7 +18,6 @@
 {
     if (self = [super initWithRootViewController:self.photoGroupViewController])
     {
-        
     }
     return self;
 }

@@ -165,7 +165,7 @@
 #pragma mark - 手势处理
 - (void)singleTapHandler:(UITapGestureRecognizer *)recognizer
 {
-    [self performSelector:@selector(singleTapAction) withObject:nil afterDelay:0.5];
+    [self performSelector:@selector(singleTapAction) withObject:nil afterDelay:0.25];
 }
 - (void)singleTapAction
 {
@@ -182,6 +182,7 @@
 //手势
 - (void)doubleTapHandler:(UITapGestureRecognizer *)recognizer
 {
+    [self canPerformAction:@selector(singleTap) withSender:nil];
     self.singleTap = NO;
     if (self.zoomScale > self.minimumZoomScale)
     {

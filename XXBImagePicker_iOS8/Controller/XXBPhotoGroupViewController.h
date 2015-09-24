@@ -16,7 +16,7 @@
  *  一行显示的照片个数
  *  默认是4个
  */
-@property(nonatomic , assign)NSInteger photoInRow;
+@property(nonatomic , assign)NSInteger          photoInRow;
 /**
  *  选中的相册的ALAssets
  */
@@ -24,14 +24,14 @@
 /**
  *  是否显示数字标签
  */
-@property(nonatomic , assign)BOOL showPage;
+@property(nonatomic , assign)BOOL               showPage;
 /**
  *  最多可选的照片的张数
  */
-@property(nonatomic , assign)NSInteger photoCount;
+@property(nonatomic , assign)NSInteger          photoCount;
 /**
  *  是否显示所有的照片
  */
-@property(nonatomic , assign)BOOL showAllPhoto;
-@property(nonatomic , strong)NSArray *dataSouceArray;
+@property(nonatomic , assign)BOOL               showAllPhoto;
+@property(nonatomic , strong)NSArray            *dataSouceArray;
 @end

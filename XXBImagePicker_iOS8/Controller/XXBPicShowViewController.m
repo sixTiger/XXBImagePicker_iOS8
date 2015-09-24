@@ -32,9 +32,6 @@
     return indexPaths;
 }
 @end
-
-
-
 @interface XXBPicShowViewController ()<PHPhotoLibraryChangeObserver,UICollectionViewDelegate,UICollectionViewDataSource,PHPhotoLibraryChangeObserver,XXBPicShowCollectionViewCellDelegate>
 @property (strong) PHCachingImageManager            *imageManager;
 
@@ -43,6 +40,16 @@
 
 @implementation XXBPicShowViewController
 static NSString *CellReuseIdentifier = @"XXBPicShowCollectionViewCell";
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    if (self.assetsFetchResults.count > self.index)
+    {
+        NSIndexPath *indepath = [NSIndexPath indexPathForRow:self.index inSection:0];
+        [self.collectionView scrollToItemAtIndexPath:indepath atScrollPosition:UICollectionViewScrollPositionNone animated:NO];
+    }
+}
 - (void)dealloc
 {
     [[PHPhotoLibrary sharedPhotoLibrary] unregisterChangeObserver:self];
@@ -57,14 +64,15 @@ static NSString *CellReuseIdentifier = @"XXBPicShowCollectionViewCell";
 {
     if (_collectionView == nil)
     {
+        CGFloat padding = 5;
         UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc] init];
-        CGFloat itemWidth = [UIScreen mainScreen].bounds.size.width;
-        CGFloat itemHeight = [UIScreen mainScreen].bounds.size.height;
+        layout.sectionInset = UIEdgeInsetsMake(0, padding, 0, padding);
+        CGFloat itemWidth = self.view.bounds.size.width;
+        CGFloat itemHeight = self.view.bounds.size.height;
         layout.itemSize = CGSizeMake(itemWidth, itemHeight);
-        layout.sectionInset = UIEdgeInsetsMake(layout.minimumInteritemSpacing, layout.minimumInteritemSpacing, layout.minimumLineSpacing, layout.minimumInteritemSpacing);
         layout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
-        layout.minimumLineSpacing = 0;
-        UICollectionView *collectionView  = [[UICollectionView alloc] initWithFrame:self.view.bounds collectionViewLayout:layout];
+        layout.minimumLineSpacing = padding * 2;
+        UICollectionView *collectionView  = [[UICollectionView alloc] initWithFrame:CGRectMake(-padding, 0, itemWidth + padding * 2, itemHeight) collectionViewLayout:layout];
         [self.view addSubview:collectionView];
         collectionView.autoresizingMask = (1 << 6) - 1;
         collectionView.delegate = self;
@@ -80,12 +88,10 @@ static NSString *CellReuseIdentifier = @"XXBPicShowCollectionViewCell";
     _assetsFetchResults = assetsFetchResults;
     [self.collectionView reloadData];
 }
-- (void)setAssetCollection:(PHAssetCollection *)assetCollection
+- (void)setIndex:(NSInteger)index
 {
-    _assetCollection = assetCollection;
-    [self.collectionView reloadData];
+    _index = index;
 }
-
 #pragma mark - PHPhotoLibraryChangeObserver
 
 - (void)photoLibraryDidChange:(PHChange *)changeInstance
@@ -128,8 +134,7 @@ static NSString *CellReuseIdentifier = @"XXBPicShowCollectionViewCell";
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
-    NSInteger count = self.assetsFetchResults.count;
-    return count;
+    return self.assetsFetchResults.count;
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath

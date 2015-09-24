@@ -6,21 +6,21 @@
 //  Copyright (c) 2015年 杨小兵. All rights reserved.
 //
 
-#import "XXBImagePickerTableViewCell.h"
+#import "XXBPhotoGroupTableViewCell.h"
 
-@interface XXBImagePickerTableViewCell ()
+@interface XXBPhotoGroupTableViewCell ()
 
 @property(nonatomic , weak)UIImageView *iconImageView;
 @property(nonatomic , weak)UILabel *titleLabel;
 @property(nonatomic , weak)UILabel *subTitleLabel;
 @end
 
-@implementation XXBImagePickerTableViewCell
+@implementation XXBPhotoGroupTableViewCell
 - (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
-    if (self = [super initWithStyle:style
-                    reuseIdentifier:reuseIdentifier])
+    if (self = [super initWithStyle:style reuseIdentifier:reuseIdentifier])
     {
+        
     }
     return self;
 }
@@ -49,12 +49,36 @@
     _iconImage = iconImage;
     self.iconImageView.image = _iconImage;
 }
+
+
+
+
+- (void)setAssetCollection:(PHAssetCollection *)assetCollection
+{
+    _assetCollection = assetCollection;
+    self.titleLabel.text = assetCollection.localizedTitle;
+    PHFetchResult *countResult = [PHAsset fetchAssetsInAssetCollection:assetCollection options:nil];
+    self.subTitleLabel.text = [NSString stringWithFormat:@"%@",@(countResult.count)];
+    PHAsset *asset = [countResult lastObject];
+    CGSize AssetGridThumbnailSize = CGSizeMake(80, 80);
+    [[PHImageManager defaultManager] requestImageForAsset:asset
+                                               targetSize:AssetGridThumbnailSize
+                                              contentMode:PHImageContentModeAspectFill
+                                                  options:nil
+                                            resultHandler:^(UIImage *result, NSDictionary *info) {
+                                                self.iconImageView.image = result;
+                                                
+                                            }];
+    
+}
 - (UIImageView *)iconImageView
 {
     if (_iconImageView == nil)
     {
         UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 80, 80)];
         [self.contentView addSubview:imageView];
+        imageView.contentMode = UIViewContentModeScaleAspectFill;
+        imageView.clipsToBounds = YES;
         _iconImageView = imageView;
     }
     return _iconImageView;

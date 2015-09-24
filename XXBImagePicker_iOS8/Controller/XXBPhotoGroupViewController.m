@@ -7,7 +7,7 @@
 //
 
 #import "XXBPhotoGroupViewController.h"
-#import "XXBImagePickerTableViewCell.h"
+#import "XXBPhotoGroupTableViewCell.h"
 #import "XXBPhotoCollectionViewController.h"
 #import <Photos/Photos.h>
 @interface XXBPhotoGroupViewController ()<PHPhotoLibraryChangeObserver>
@@ -22,6 +22,7 @@
 @end
 
 @implementation XXBPhotoGroupViewController
+static NSString *photoGroupViewCellID = @"XXBPhotoGroupViewCellID";
 - (instancetype)init
 {
     if (self = [super init])
@@ -37,6 +38,7 @@
 - (void)p_setup
 {
     [self setupItems];
+    [self.tableView registerClass:[XXBPhotoGroupTableViewCell class] forCellReuseIdentifier:photoGroupViewCellID];
     self.tableView.rowHeight = 60;
     PHFetchResult *smartAlbums = [PHAssetCollection fetchAssetCollectionsWithType:PHAssetCollectionTypeSmartAlbum subtype:PHAssetCollectionSubtypeAlbumRegular options:nil];
     PHFetchOptions *option = [[PHFetchOptions alloc] init];
@@ -79,49 +81,19 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    XXBImagePickerTableViewCell *cell = nil;
-    cell = [tableView dequeueReusableCellWithIdentifier:@"PhotoCell"];
-    if (cell == nil)
-    {
-        cell = [[XXBImagePickerTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"PhotoCell"];
-    }
+    XXBPhotoGroupTableViewCell *cell = nil;
+    cell = [tableView dequeueReusableCellWithIdentifier:photoGroupViewCellID];
     if (indexPath.section == 0)
     {
         PHFetchOptions *options = [[PHFetchOptions alloc] init];
-        options.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"creationDate" ascending:YES]];
-       PHFetchResult *countResult = [PHAsset fetchAssetsWithOptions:options];
-        cell.title = @"所有照片";
-        cell.subTitle = [NSString stringWithFormat:@"%@",@(countResult.count)];
-        PHAsset *asset = [countResult lastObject];
-        self.imageManager = [[PHCachingImageManager alloc] init];
-        CGSize AssetGridThumbnailSize = CGSizeMake(80, 80);
-        [self.imageManager requestImageForAsset:asset
-                                     targetSize:AssetGridThumbnailSize
-                                    contentMode:PHImageContentModeAspectFill
-                                        options:nil
-                                  resultHandler:^(UIImage *result, NSDictionary *info) {
-                                      cell.iconImage = result;
-                                  }];
-
+                options.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"creationDate" ascending:YES]];
+        PHFetchResult *countResult = [PHAsset fetchAssetsWithOptions:options];
+        PHAssetCollection *assetCollection = [PHAssetCollection transientAssetCollectionWithAssetFetchResult:countResult title:@"所有照片"];
+        cell.assetCollection = assetCollection;
     }
     else
     {
-        PHAssetCollection *assetCollection = self.collectionsFetchResults[indexPath.section -1 ][indexPath.row];
-        cell.title = assetCollection.localizedTitle;
-        PHFetchResult *countResult = [PHAsset fetchAssetsInAssetCollection:assetCollection options:nil];
-        cell.subTitle = [NSString stringWithFormat:@"%@",@(countResult.count)];
-        PHAsset *asset = [countResult lastObject];
-        self.imageManager = [[PHCachingImageManager alloc] init];
-        CGSize AssetGridThumbnailSize = CGSizeMake(80, 80);
-        [self.imageManager requestImageForAsset:asset
-                                     targetSize:AssetGridThumbnailSize
-                                    contentMode:PHImageContentModeAspectFill
-                                        options:nil
-                                  resultHandler:^(UIImage *result, NSDictionary *info) {
-                                      cell.iconImage = result;
-                                      
-                                  }];
-        
+        cell.assetCollection = self.collectionsFetchResults[indexPath.section - 1][indexPath.row];
     }
     
     return cell;
