@@ -10,5 +10,16 @@
 #import <Photos/Photos.h>
 
 @interface XXBPicShowViewController : UIViewController
-@property(nonatomic , strong)PHAsset *asset;
+/**
+ *  相册组
+ */
+@property (nonatomic, strong) PHFetchResult         *assetsFetchResults;
+/**
+ *  相册组
+ */
+@property (nonatomic, strong) PHAssetCollection     *assetCollection;
+/**
+ *  当前下标
+ */
+@property(nonatomic , assign) NSInteger             index;
 @end

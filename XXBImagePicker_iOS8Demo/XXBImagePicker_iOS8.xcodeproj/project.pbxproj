@@ -23,6 +23,7 @@
 		62A2E5261B9032AB00CD1DDF /* XXBImagePickerTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 62A2E5251B9032AB00CD1DDF /* XXBImagePickerTableViewCell.m */; };
 		62A2E5291B903F1F00CD1DDF /* XXBPhotoCollectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 62A2E5281B903F1F00CD1DDF /* XXBPhotoCollectionViewController.m */; };
 		62DC5DE31BB39D7C0083F079 /* XXBPicShowView.m in Sources */ = {isa = PBXBuildFile; fileRef = 62DC5DE21BB39D7C0083F079 /* XXBPicShowView.m */; settings = {ASSET_TAGS = (); }; };
+		62DC5DE61BB3BCE70083F079 /* XXBPicShowCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 62DC5DE51BB3BCE70083F079 /* XXBPicShowCollectionViewCell.m */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -66,6 +67,8 @@
 		62A2E5281B903F1F00CD1DDF /* XXBPhotoCollectionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XXBPhotoCollectionViewController.m; sourceTree = "<group>"; };
 		62DC5DE11BB39D7C0083F079 /* XXBPicShowView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XXBPicShowView.h; sourceTree = "<group>"; };
 		62DC5DE21BB39D7C0083F079 /* XXBPicShowView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XXBPicShowView.m; sourceTree = "<group>"; };
+		62DC5DE41BB3BCE70083F079 /* XXBPicShowCollectionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XXBPicShowCollectionViewCell.h; sourceTree = "<group>"; };
+		62DC5DE51BB3BCE70083F079 /* XXBPicShowCollectionViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XXBPicShowCollectionViewCell.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -187,6 +190,8 @@
 				62DC5DE21BB39D7C0083F079 /* XXBPicShowView.m */,
 				62A2E5241B9032AB00CD1DDF /* XXBImagePickerTableViewCell.h */,
 				62A2E5251B9032AB00CD1DDF /* XXBImagePickerTableViewCell.m */,
+				62DC5DE41BB3BCE70083F079 /* XXBPicShowCollectionViewCell.h */,
+				62DC5DE51BB3BCE70083F079 /* XXBPicShowCollectionViewCell.m */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -312,6 +317,7 @@
 				62A2E51E1B8FF71000CD1DDF /* MBProgressHUD+XXB.m in Sources */,
 				62A2E4F11B8FEFF500CD1DDF /* ViewController.m in Sources */,
 				62DC5DE31BB39D7C0083F079 /* XXBPicShowView.m in Sources */,
+				62DC5DE61BB3BCE70083F079 /* XXBPicShowCollectionViewCell.m in Sources */,
 				62A2E4EE1B8FEFF500CD1DDF /* AppDelegate.m in Sources */,
 				62A2E4EB1B8FEFF500CD1DDF /* main.m in Sources */,
 				62A2E5261B9032AB00CD1DDF /* XXBImagePickerTableViewCell.m in Sources */,

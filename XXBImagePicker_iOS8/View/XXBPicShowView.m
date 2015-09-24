@@ -59,13 +59,17 @@
 
 - (void)setImage:(UIImage *)image
 {
-    self.imageView.image = image;
+    if (image == _image) {
+        return;
+    }
+    [self setZoomScale:self.minimumZoomScale animated:YES];
+    _image = image;
+    self.imageView.image = _image;
     self.imageView.frame = self.bounds;
     
     CGSize imageSize;
-    if (image)
+    if (_image)
     {
-        
         imageSize = self.imageView.contentSize;
     }
     else
@@ -90,7 +94,6 @@
         self.delegate = self;
         self.bouncesZoom = YES;
         self.singleTap = YES;
-//        self .backgroundColor = [UIColor grayColor];
     }
     return self;
 }
@@ -111,7 +114,6 @@
         { // 宽度或高度 都小于 self 的宽度和高度
             self.zoomScale = minZoomScale;
         }
-        // Center container view
         [self centerContent];
     }
 }

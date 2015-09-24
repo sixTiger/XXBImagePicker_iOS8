@@ -159,8 +159,8 @@ static CGSize AssetGridThumbnailSize;
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
     XXBPicShowViewController *picShowViewController = [[XXBPicShowViewController alloc] init];
-    PHAsset *asset = self.assetsFetchResults[indexPath.item];
-    picShowViewController.asset = asset;
+    PHAsset *asset = self.assetsFetchResults[indexPath.row];
+    picShowViewController.assetsFetchResults = self.assetsFetchResults;
     [self.navigationController pushViewController:picShowViewController animated:YES];
 }
 #pragma mark - UIScrollViewDelegate

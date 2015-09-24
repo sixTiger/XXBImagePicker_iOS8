@@ -9,14 +9,40 @@
 #import "XXBPicShowViewController.h"
 #import <Photos/Photos.h>
 #import "XXBPicShowView.h"
+#import "XXBPicShowCollectionViewCell.h"
 
-@interface XXBPicShowViewController ()<PHPhotoLibraryChangeObserver,XXBPicShowViewDelegate>
+@implementation NSIndexSet (Convenience)
+- (NSArray *)aapl_indexPathsFromIndexesWithSection:(NSUInteger)section {
+    NSMutableArray *indexPaths = [NSMutableArray arrayWithCapacity:self.count];
+    [self enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+        [indexPaths addObject:[NSIndexPath indexPathForItem:idx inSection:section]];
+    }];
+    return indexPaths;
+}
+@end
+@implementation UICollectionView (Convenience)
+- (NSArray *)aapl_indexPathsForElementsInRect:(CGRect)rect {
+    NSArray *allLayoutAttributes = [self.collectionViewLayout layoutAttributesForElementsInRect:rect];
+    if (allLayoutAttributes.count == 0) { return nil; }
+    NSMutableArray *indexPaths = [NSMutableArray arrayWithCapacity:allLayoutAttributes.count];
+    for (UICollectionViewLayoutAttributes *layoutAttributes in allLayoutAttributes) {
+        NSIndexPath *indexPath = layoutAttributes.indexPath;
+        [indexPaths addObject:indexPath];
+    }
+    return indexPaths;
+}
+@end
+
+
+
+@interface XXBPicShowViewController ()<PHPhotoLibraryChangeObserver,UICollectionViewDelegate,UICollectionViewDataSource,PHPhotoLibraryChangeObserver,XXBPicShowCollectionViewCellDelegate>
 @property (strong) PHCachingImageManager            *imageManager;
-@property(nonatomic , weak)XXBPicShowView           *picShowView;
+
+@property(nonatomic , weak)UICollectionView *collectionView;
 @end
 
 @implementation XXBPicShowViewController
-
+static NSString *CellReuseIdentifier = @"XXBPicShowCollectionViewCell";
 - (void)dealloc
 {
     [[PHPhotoLibrary sharedPhotoLibrary] unregisterChangeObserver:self];
@@ -27,86 +53,116 @@
     [super viewDidLoad];
     [[PHPhotoLibrary sharedPhotoLibrary] registerChangeObserver:self];
 }
-- (void)setAsset:(PHAsset *)asset
+- (UICollectionView *)collectionView
 {
-    _asset = asset;
-    [self p_updateImage];
-}
-- (void)p_updateImage
-{
-    [self p_showRealPhoto];
-}
-/**
- *  显示2X图
- */
-- (void)p_show2XPhoto
-{
-    CGFloat scale = [UIScreen mainScreen].scale;
-    CGSize targetSize = CGSizeMake(CGRectGetWidth(self.picShowView.bounds) * scale, CGRectGetHeight(self.picShowView.bounds) * scale);
-    PHImageRequestOptions *options = [[PHImageRequestOptions alloc] init];
-    // Download from cloud if necessary
-    options.networkAccessAllowed = YES;
-    options.progressHandler = ^(double progress, NSError *error, BOOL *stop, NSDictionary *info) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            //            self.progressView.progress = progress;
-            //            self.progressView.hidden = (progress <= 0.0 || progress >= 1.0);
-        });
-    };
-    [[PHImageManager defaultManager] requestImageForAsset:self.asset targetSize:targetSize contentMode:PHImageContentModeAspectFit options:options resultHandler:^(UIImage *result, NSDictionary *info) {
-        if (result) {
-            self.picShowView.image = result;
-        }
-    }];
-}
-/**
- *  按照原始大小显示
- */
-- (void)p_showRealPhoto
-{
-    PHImageRequestOptions *options = [[PHImageRequestOptions alloc] init];
-    // Download from cloud if necessary
-    options.networkAccessAllowed = YES;
-    options.progressHandler = ^(double progress, NSError *error, BOOL *stop, NSDictionary *info) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            //   如果没有图片的话去网络拉去图片
-            //   self.progressView.progress = progress;
-            //   self.progressView.hidden = (progress <= 0.0 || progress >= 1.0);
-        });
-    };
-    [[PHImageManager defaultManager] requestImageDataForAsset:self.asset options:options resultHandler:^(NSData * _Nullable imageData, NSString * _Nullable dataUTI, UIImageOrientation orientation, NSDictionary * _Nullable info) {
-        self.picShowView.image = [UIImage imageWithData:imageData];
-    }];
-}
-- (XXBPicShowView *)picShowView
-{
-    if (_picShowView == nil)
+    if (_collectionView == nil)
     {
-        XXBPicShowView *picShowView= [[XXBPicShowView alloc] initWithFrame:self.view.bounds];
-        [self.view addSubview:picShowView];
-        picShowView.picShowViewdelegate = self;
-        _picShowView = picShowView;
+        UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc] init];
+        CGFloat itemWidth = [UIScreen mainScreen].bounds.size.width;
+        CGFloat itemHeight = [UIScreen mainScreen].bounds.size.height;
+        layout.itemSize = CGSizeMake(itemWidth, itemHeight);
+        layout.sectionInset = UIEdgeInsetsMake(layout.minimumInteritemSpacing, layout.minimumInteritemSpacing, layout.minimumLineSpacing, layout.minimumInteritemSpacing);
+        layout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
+        layout.minimumLineSpacing = 0;
+        UICollectionView *collectionView  = [[UICollectionView alloc] initWithFrame:self.view.bounds collectionViewLayout:layout];
+        [self.view addSubview:collectionView];
+        collectionView.autoresizingMask = (1 << 6) - 1;
+        collectionView.delegate = self;
+        collectionView.dataSource = self;
+        collectionView.pagingEnabled = YES;
+        [collectionView registerClass:[XXBPicShowCollectionViewCell class] forCellWithReuseIdentifier:CellReuseIdentifier];
+        _collectionView = collectionView;
     }
-    return _picShowView;
+    return _collectionView;
 }
+- (void)setAssetsFetchResults:(PHFetchResult *)assetsFetchResults
+{
+    _assetsFetchResults = assetsFetchResults;
+    [self.collectionView reloadData];
+}
+- (void)setAssetCollection:(PHAssetCollection *)assetCollection
+{
+    _assetCollection = assetCollection;
+    [self.collectionView reloadData];
+}
+
 #pragma mark - PHPhotoLibraryChangeObserver
 
 - (void)photoLibraryDidChange:(PHChange *)changeInstance
 {
     dispatch_async(dispatch_get_main_queue(), ^{
-        PHObjectChangeDetails *changeDetails = [changeInstance changeDetailsForObject:self.asset];
-        if (changeDetails)
-        {
-            self.asset = [changeDetails objectAfterChanges];
-            if ([changeDetails assetContentChanged])
+        PHFetchResultChangeDetails *collectionChanges = [changeInstance changeDetailsForFetchResult:self.assetsFetchResults];
+        if (collectionChanges) {
+            self.assetsFetchResults = [collectionChanges fetchResultAfterChanges];
+            UICollectionView *collectionView = self.collectionView;
+            if (![collectionChanges hasIncrementalChanges] || [collectionChanges hasMoves])
             {
-                [self p_updateImage];
+                [collectionView reloadData];
+                
             }
+            else
+            {
+                [collectionView performBatchUpdates:^{
+                    NSIndexSet *removedIndexes = [collectionChanges removedIndexes];
+                    if ([removedIndexes count])
+                    {
+                        [collectionView deleteItemsAtIndexPaths:[removedIndexes aapl_indexPathsFromIndexesWithSection:0]];
+                    }
+                    NSIndexSet *insertedIndexes = [collectionChanges insertedIndexes];
+                    if ([insertedIndexes count]) {
+                        [collectionView insertItemsAtIndexPaths:[insertedIndexes aapl_indexPathsFromIndexesWithSection:0]];
+                    }
+                    NSIndexSet *changedIndexes = [collectionChanges changedIndexes];
+                    if ([changedIndexes count]) {
+                        [collectionView reloadItemsAtIndexPaths:[changedIndexes aapl_indexPathsFromIndexesWithSection:0]];
+                    }
+                } completion:NULL];
+            }
+            
+            [self resetCachedAssets];
         }
-        
     });
 }
-- (void)picShowViewSingletap:(XXBPicShowView *)picShowView
+
+#pragma mark - UICollectionViewDataSource
+
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
-    [self.navigationController setNavigationBarHidden:!self.navigationController.navigationBar.hidden animated:YES];
+    NSInteger count = self.assetsFetchResults.count;
+    return count;
+}
+
+- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    XXBPicShowCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:CellReuseIdentifier forIndexPath:indexPath];
+    PHAsset *asset = self.assetsFetchResults[indexPath.item];
+    cell.asset = asset;
+    cell.delegate = self;
+    return cell;
+}
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
+{
+}
+- (void)picShowCollectionViewCellSingletap:(XXBPicShowCollectionViewCell *)picShowCollectionViewCell
+{
+    [self.navigationController setNavigationBarHidden:!self.navigationController.navigationBarHidden animated:YES];
+}
+#pragma mark - Asset Caching
+
+- (void)resetCachedAssets
+{
+    [self.imageManager stopCachingImagesForAllAssets];
+}
+
+- (NSArray *)assetsAtIndexPaths:(NSArray *)indexPaths
+{
+    if (indexPaths.count == 0) { return nil; }
+    
+    NSMutableArray *assets = [NSMutableArray arrayWithCapacity:indexPaths.count];
+    for (NSIndexPath *indexPath in indexPaths) {
+        PHAsset *asset = self.assetsFetchResults[indexPath.item];
+        [assets addObject:asset];
+    }
+    return assets;
 }
 @end

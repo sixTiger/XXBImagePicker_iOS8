@@ -10,7 +10,7 @@
 @class XXBPicShowView;
 
 @protocol XXBPicShowViewDelegate <NSObject>
-
+@optional
 - (void)picShowViewSingletap:(XXBPicShowView *)picShowView;
 
 @end
