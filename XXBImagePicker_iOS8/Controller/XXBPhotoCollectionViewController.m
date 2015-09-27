@@ -138,9 +138,9 @@ static CGSize AssetGridThumbnailSize;
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     XXBPhotoCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:photoCollectionViewCell forIndexPath:indexPath];
-    cell.photoModel = self.photoModleArray[indexPath.row];
-    cell.photoModel.tag = indexPath.row;
     cell.tag = indexPath.row;
+    
+    cell.photoModel = self.photoModleArray[indexPath.row];
     return cell;
 }
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath

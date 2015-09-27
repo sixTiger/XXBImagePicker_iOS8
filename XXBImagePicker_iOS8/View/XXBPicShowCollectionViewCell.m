@@ -53,12 +53,10 @@
     options.networkAccessAllowed = YES;
     options.progressHandler = ^(double progress, NSError *error, BOOL *stop, NSDictionary *info) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            //   如果没有图片的话去网络拉去图片
-            //   self.progressView.progress = progress;
-            //   self.progressView.hidden = (progress <= 0.0 || progress >= 1.0);
         });
     };
-    [[PHImageManager defaultManager] requestImageDataForAsset:self.asset options:options resultHandler:^(NSData * _Nullable imageData, NSString * _Nullable dataUTI, UIImageOrientation orientation, NSDictionary * _Nullable info) {
+    [[PHImageManager defaultManager] requestImageDataForAsset:self.asset options:options resultHandler:^(NSData *imageData, NSString *dataUTI, UIImageOrientation orientation, NSDictionary *info) {
+        
         self.picShowView.image = [UIImage imageWithData:imageData];
     }];
 }

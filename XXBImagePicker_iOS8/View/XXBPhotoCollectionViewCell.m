@@ -16,34 +16,89 @@
 @implementation XXBPhotoCollectionViewCell
 - (void)setPhotoModel:(XXBPhotoModel *)photoModel
 {
+    
     _photoModel = photoModel;
-    [self p_updateImage];
+    _photoModel.tag = self.tag;
+    [self p_updateImageAsync];
 }
-/**
- *  更新照片
- */
-- (void)p_updateImage
+- (void)p_updateImageAsync
 {
+    self.imageView.image = nil;
     if (self.photoModel.image)
     {
         self.imageView.image = self.photoModel.image;
         return;
     }
-    CGFloat scale = [UIScreen mainScreen].scale;
-    CGFloat itemWidth = self.contentView.bounds.size.width * scale;
-    CGFloat itemHeight = self.contentView.bounds.size.height *scale;
-    CGSize AssetGridThumbnailSize = CGSizeMake(itemWidth , itemHeight);
-    [[PHImageManager defaultManager] requestImageForAsset:self.photoModel.asset
-                                               targetSize:AssetGridThumbnailSize
-                                              contentMode:PHImageContentModeAspectFill
-                                                  options:nil
-                                            resultHandler:^(UIImage *result, NSDictionary *info) {
-                                                self.imageView.image = result;
-                                                if (self.tag == self.photoModel.tag)
-                                                {
-                                                    self.photoModel.image  = result;
-                                                }
-                                            }];
+    dispatch_sync(dispatch_get_global_queue(0, 0), ^{
+        CGFloat scale = [UIScreen mainScreen].scale;
+        CGFloat itemWidth = self.contentView.bounds.size.width * scale;
+        CGFloat itemHeight = self.contentView.bounds.size.height *scale;
+        CGSize AssetGridThumbnailSize = CGSizeMake(itemWidth , itemHeight);
+        XXBPhotoModel *photoModel = self.photoModel;
+        __weak typeof(self) weakSelf = self;
+        [[PHImageManager defaultManager] requestImageForAsset:self.photoModel.asset
+                                                   targetSize:AssetGridThumbnailSize
+                                                  contentMode:PHImageContentModeAspectFill
+                                                      options:nil
+                                                resultHandler:^(UIImage *result, NSDictionary *info) {
+                                                    if (!weakSelf )
+                                                    {
+                                                        return ;
+                                                    }
+                                                    photoModel.image  = result;
+                                                    if(photoModel.tag == weakSelf.photoModel.tag)
+                                                    {
+                                                        
+                                                        weakSelf.imageView.image = result;
+                                                        
+                                                    }
+                                                }];
+        
+    });
+    
+}
+/**
+ *  更新照片
+ */
+- (void)p_updateImageSync
+{
+    self.imageView.image = nil;
+    if (self.photoModel.image)
+    {
+        self.imageView.image = self.photoModel.image;
+        return;
+    }
+    dispatch_sync(dispatch_get_global_queue(0, 0), ^{
+        CGFloat scale = [UIScreen mainScreen].scale;
+        CGFloat itemWidth = self.contentView.bounds.size.width * scale;
+        CGFloat itemHeight = self.contentView.bounds.size.height *scale;
+        CGSize AssetGridThumbnailSize = CGSizeMake(itemWidth , itemHeight);
+        XXBPhotoModel *photoModel = self.photoModel;
+        
+        PHImageRequestOptions *option = [[PHImageRequestOptions alloc] init];
+        //        option.deliveryMode = PHImageRequestOptionsDeliveryModeOpportunistic;
+        option.synchronous = YES;
+        __weak typeof(self) weakSelf = self;
+        [[PHImageManager defaultManager] requestImageForAsset:self.photoModel.asset
+                                                   targetSize:AssetGridThumbnailSize
+                                                  contentMode:PHImageContentModeAspectFill
+                                                      options:option
+                                                resultHandler:^(UIImage *result, NSDictionary *info) {
+                                                    if (!weakSelf )
+                                                    {
+                                                        return ;
+                                                    }
+                                                    photoModel.image  = result;
+                                                    if(weakSelf.tag == weakSelf.photoModel.tag)
+                                                    {
+                                                        dispatch_async(dispatch_get_main_queue(), ^{
+                                                            
+                                                            weakSelf.imageView.image = result;
+                                                        });
+                                                    }
+                                                }];
+        
+    });
 }
 - (UIImageView *)imageView
 {
