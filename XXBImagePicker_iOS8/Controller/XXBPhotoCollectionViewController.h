@@ -8,7 +8,23 @@
 
 #import <UIKit/UIKit.h>
 @import Photos;
-
+@class XXBPhotoCollectionViewController;
+@protocol XXBPhotoCollectionViewControllerDelegate <NSObject>
+@optional
+/**
+ *  选择完照片的回调
+ *
+ *  @param photoCollectionViewController 回调的 XXBPhotoCollectionViewController
+ *  @param selectPhotos   选择的照片的相关资源
+ */
+- (void)photoCollectionViewController:(XXBPhotoCollectionViewController *)photoCollectionViewController didselectPhotos:(NSArray *)selectPhotos;
+/**
+ *  选择完照片的回调
+ *
+ *  @param photoCollectionViewController 回调的 XXBPhotoCollectionViewController
+ */
+- (void)photoCollectionViewControllerCancleSelected:(XXBPhotoCollectionViewController *)photoCollectionViewController;
+@end
 @interface XXBPhotoCollectionViewController : UICollectionViewController
 /**
  *  照片组的先关信息

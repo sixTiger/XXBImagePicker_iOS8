@@ -29,12 +29,20 @@ typedef enum : NSUInteger {
 @class XXBImagePicker;
 
 @protocol XXBImagePickerDelegate <NSObject>
-
-@optional
-
-- (void)imagePickerControllerCancleselect:(XXBImagePicker *)imagePickController;
+/**
+ *  从相册里边选择完照片的回调
+ *
+ *  @param imagePickController 回调的 imagePickController
+ *  @param selectPhotos        选择的照片的资源路径等相关信息
+ */
 - (void)imagePickerController:(XXBImagePicker *)imagePickController didselectPhotos:(NSArray *)selectPhotos;
-
+@optional
+/**
+ *  从相册里边选择完照片的回调
+ *
+ *  @param imagePickController 回调的imagePickController
+ */
+- (void)imagePickerControllerCancleselect:(XXBImagePicker *)imagePickController;
 @end
 
 @interface XXBImagePicker : UINavigationController

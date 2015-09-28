@@ -13,4 +13,10 @@
 //{
 //    return arc4random_uniform(100);
 //}
+- (void)setAsset:(PHAsset *)asset
+{
+    _asset = asset;
+    
+    NSLog(@"%@ ---++++-- %@",[PHAsset class],[asset class]);
+}
 @end

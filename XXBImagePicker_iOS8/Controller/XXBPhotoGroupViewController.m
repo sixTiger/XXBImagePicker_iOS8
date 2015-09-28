@@ -10,14 +10,20 @@
 #import "XXBPhotoGroupTableViewCell.h"
 #import "XXBPhotoCollectionViewController.h"
 #import <Photos/Photos.h>
+#import "XXBPhotoGroupModel.h"
 @interface XXBPhotoGroupViewController ()<PHPhotoLibraryChangeObserver>
 {
     NSInteger _photoInRow;
 }
 /**
- *  相册组
+ *  相册组 只存放资源文件
  */
 @property(nonatomic , strong) NSArray                                   *photoSectionArray;
+
+/**
+ *  相册组 存放的XXBPhotoModel
+ */
+@property(nonatomic , strong) NSMutableArray                            *photoSectionModelArray;
 /**
  *  像个每一个section的标题
  */
@@ -31,7 +37,7 @@
  */
 @property (strong) PHCachingImageManager                                *imageManager;
 /**
- *  选中的相册模型
+ *  没有编辑的相册分组的相关信息
  */
 @property(nonatomic , strong)NSArray                                    *photoRealSectionArray;
 
@@ -198,6 +204,30 @@ static NSString *photoGroupViewCellID = @"XXBPhotoGroupViewCellID";
     }
     
     self.photoSectionArray = photoSectionArray;
+}
+- (void)setPhotoSectionArray:(NSArray *)photoSectionArray
+{
+    _photoSectionArray = photoSectionArray;
+    [self.photoSectionModelArray removeAllObjects];
+    for (PHFetchResult *assetsFetchResults in _photoSectionArray)
+    {
+        NSMutableArray *array = [NSMutableArray array];
+        for (int i = 0; i< assetsFetchResults.count; i++)
+        {
+            XXBPhotoGroupModel *photoGroupModel = [[XXBPhotoGroupModel alloc] init];
+            photoGroupModel.assetCollection = assetsFetchResults[i];
+            [array addObject:photoGroupModel];
+        }
+        [self.photoSectionModelArray addObject:array];
+    }
+}
+- (NSMutableArray *)photoSectionModelArray
+{
+    if (_photoSectionModelArray == nil)
+    {
+        _photoSectionModelArray = [NSMutableArray array];
+    }
+    return _photoSectionModelArray;
 }
 #pragma mark - 懒加载
 - (void)setSelectPhotoModels:(NSMutableArray *)selectPhotoModels
