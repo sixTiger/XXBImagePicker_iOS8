@@ -26,6 +26,8 @@
 		62A2E5231B8FF7B700CD1DDF /* XXBPhotoGroupViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 62A2E5221B8FF7B700CD1DDF /* XXBPhotoGroupViewController.m */; };
 		62A2E5261B9032AB00CD1DDF /* XXBPhotoGroupTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 62A2E5251B9032AB00CD1DDF /* XXBPhotoGroupTableViewCell.m */; };
 		62A2E5291B903F1F00CD1DDF /* XXBPhotoCollectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 62A2E5281B903F1F00CD1DDF /* XXBPhotoCollectionViewController.m */; };
+		62CF35761BB9710000306078 /* XXBImagePicker.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 62CF35751BB9710000306078 /* XXBImagePicker.bundle */; settings = {ASSET_TAGS = (); }; };
+		62CF35771BB9710000306078 /* XXBImagePicker.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 62CF35751BB9710000306078 /* XXBImagePicker.bundle */; settings = {ASSET_TAGS = (); }; };
 		62DC5DE31BB39D7C0083F079 /* XXBPicShowView.m in Sources */ = {isa = PBXBuildFile; fileRef = 62DC5DE21BB39D7C0083F079 /* XXBPicShowView.m */; settings = {ASSET_TAGS = (); }; };
 		62DC5DE61BB3BCE70083F079 /* XXBPicShowCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 62DC5DE51BB3BCE70083F079 /* XXBPicShowCollectionViewCell.m */; settings = {ASSET_TAGS = (); }; };
 		62DC5DE91BB3E5F70083F079 /* XXBPhotoCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 62DC5DE81BB3E5F70083F079 /* XXBPhotoCollectionViewCell.m */; settings = {ASSET_TAGS = (); }; };
@@ -79,6 +81,7 @@
 		62A2E5251B9032AB00CD1DDF /* XXBPhotoGroupTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XXBPhotoGroupTableViewCell.m; sourceTree = "<group>"; };
 		62A2E5271B903F1F00CD1DDF /* XXBPhotoCollectionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XXBPhotoCollectionViewController.h; sourceTree = "<group>"; };
 		62A2E5281B903F1F00CD1DDF /* XXBPhotoCollectionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XXBPhotoCollectionViewController.m; sourceTree = "<group>"; };
+		62CF35751BB9710000306078 /* XXBImagePicker.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = XXBImagePicker.bundle; sourceTree = "<group>"; };
 		62DC5DE11BB39D7C0083F079 /* XXBPicShowView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XXBPicShowView.h; sourceTree = "<group>"; };
 		62DC5DE21BB39D7C0083F079 /* XXBPicShowView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XXBPicShowView.m; sourceTree = "<group>"; };
 		62DC5DE41BB3BCE70083F079 /* XXBPicShowCollectionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XXBPicShowCollectionViewCell.h; sourceTree = "<group>"; };
@@ -171,6 +174,7 @@
 		62A2E50E1B8FF0F600CD1DDF /* XXBImagePicker_iOS8 */ = {
 			isa = PBXGroup;
 			children = (
+				62CF35751BB9710000306078 /* XXBImagePicker.bundle */,
 				62DC5DED1BB3EBB00083F079 /* Model */,
 				62A2E5121B8FF49500CD1DDF /* Controller */,
 				62A2E5161B8FF49500CD1DDF /* View */,
@@ -322,6 +326,7 @@
 				62A2E4F41B8FEFF500CD1DDF /* Main.storyboard in Resources */,
 				62A2E51F1B8FF71000CD1DDF /* MBProgressHUD.bundle in Resources */,
 				62A2E4F91B8FEFF500CD1DDF /* LaunchScreen.xib in Resources */,
+				62CF35761BB9710000306078 /* XXBImagePicker.bundle in Resources */,
 				62A2E4F61B8FEFF500CD1DDF /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -330,6 +335,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				62CF35771BB9710000306078 /* XXBImagePicker.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
