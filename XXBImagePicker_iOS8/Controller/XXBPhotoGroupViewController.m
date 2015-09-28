@@ -11,7 +11,7 @@
 #import "XXBPhotoCollectionViewController.h"
 #import <Photos/Photos.h>
 #import "XXBPhotoGroupModel.h"
-@interface XXBPhotoGroupViewController ()<PHPhotoLibraryChangeObserver>
+@interface XXBPhotoGroupViewController ()<PHPhotoLibraryChangeObserver,XXBPhotoCollectionViewControllerDelegate>
 {
     NSInteger _photoInRow;
 }
@@ -94,14 +94,13 @@ static NSString *photoGroupViewCellID = @"XXBPhotoGroupViewCellID";
 {
     XXBPhotoGroupTableViewCell *cell = nil;
     cell = [tableView dequeueReusableCellWithIdentifier:photoGroupViewCellID];
-        XXBPhotoGroupModel *photoGroupModel = self.photoSectionModelArray[indexPath.section ][indexPath.row];
-        cell.assetCollection = photoGroupModel.assetCollection;
+    XXBPhotoGroupModel *photoGroupModel = self.photoSectionModelArray[indexPath.section ][indexPath.row];
+    cell.assetCollection = photoGroupModel.assetCollection;
     return cell;
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-        XXBPhotoGroupModel *photoGroupModel = self.photoSectionModelArray[indexPath.section ][indexPath.row];
-        self.photoCollectionViewController.photoModleArray = photoGroupModel.photoModelArray;
+    self.photoCollectionViewController.photoGroupModel = self.photoSectionModelArray[indexPath.section ][indexPath.row];
     [self.navigationController pushViewController:self.photoCollectionViewController animated:YES];
 }
 #pragma mark - PHPhotoLibraryChangeObserver
@@ -181,7 +180,7 @@ static NSString *photoGroupViewCellID = @"XXBPhotoGroupViewCellID";
     photoGroupModel.assetCollection = assetCollection;
     [section_0 addObject:photoGroupModel];
     [self.photoSectionModelArray addObject:section_0];
-
+    
     for (PHFetchResult *assetsFetchResults in _photoSectionArray)
     {
         NSMutableArray *array = [NSMutableArray array];
@@ -193,6 +192,15 @@ static NSString *photoGroupViewCellID = @"XXBPhotoGroupViewCellID";
         }
         [self.photoSectionModelArray addObject:array];
     }
+}
+#pragma mark - XXBPhotoCollectionViewControllerDelegate
+- (void)photoCollectionViewController:(XXBPhotoCollectionViewController *)photoCollectionViewController didselectPhotos:(NSArray *)selectPhotos
+{
+    [self.delegate photoGroupViewController:self didselectPhotos:self.selectPhotoModels];
+}
+- (void)photoCollectionViewControllerCancleSelected:(XXBPhotoCollectionViewController *)photoCollectionViewController
+{
+    [self.delegate photoGroupViewControllerCancleSelected:self];
 }
 - (NSMutableArray *)photoSectionModelArray
 {
@@ -242,6 +250,7 @@ static NSString *photoGroupViewCellID = @"XXBPhotoGroupViewCellID";
         layout.sectionInset = UIEdgeInsetsMake(layout.minimumInteritemSpacing, layout.minimumInteritemSpacing, layout.minimumLineSpacing, layout.minimumInteritemSpacing);
         layout.footerReferenceSize = CGSizeMake(300.0f, 50.0f);
         _photoCollectionViewController  = [[XXBPhotoCollectionViewController alloc] initWithCollectionViewLayout:layout];
+        _photoCollectionViewController.delegate = self;
     }
     return _photoCollectionViewController;
 }

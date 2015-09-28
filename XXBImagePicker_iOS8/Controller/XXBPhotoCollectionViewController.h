@@ -7,7 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
-@import Photos;
+#import <Photos/Photos.h>
+#import "XXBPhotoGroupModel.h"
 @class XXBPhotoCollectionViewController;
 @protocol XXBPhotoCollectionViewControllerDelegate <NSObject>
 @optional
@@ -29,9 +30,13 @@
 /**
  *  所有的照片的模型
  */
-@property(nonatomic , strong) NSArray               *photoModleArray;
+@property(nonatomic , strong)XXBPhotoGroupModel                         *photoGroupModel;
 /**
  *  选中的相册的XXBPhotoModel
  */
-@property(nonatomic , strong)NSMutableArray         *selectPhotoModels;
+@property(nonatomic , strong)NSMutableArray                             *selectPhotoModels;
+/**
+ *  代理
+ */
+@property(nonatomic , weak)id<XXBPhotoCollectionViewControllerDelegate> delegate;
 @end

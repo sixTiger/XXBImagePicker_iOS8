@@ -9,7 +9,7 @@
 #import "XXBImagePicker.h"
 #import "XXBPhotoGroupViewController.h"
 
-@interface XXBImagePicker ()
+@interface XXBImagePicker ()<XXBPhotoGroupViewControllerDelegate>
 @property(nonatomic , strong)XXBPhotoGroupViewController *photoGroupViewController;
 @end
 
@@ -27,8 +27,23 @@
     {
         _photoGroupViewController = [[XXBPhotoGroupViewController alloc] init];
         _photoGroupViewController.selectPhotoModels = self.selectPhotoModels;
+        _photoGroupViewController.delegate = self;
     }
     return _photoGroupViewController;
+}
+- (void)photoGroupViewControllerCancleSelected:(XXBPhotoGroupViewController *)photoGroupView
+{
+    if ([self.imagePickerDelegate respondsToSelector:@selector(imagePickerControllerCancleselect:)])
+    {
+        [self.imagePickerDelegate imagePickerControllerCancleselect:self];
+    }
+}
+- (void)photoGroupViewController:(XXBPhotoGroupViewController *)photoGroupView didselectPhotos:(NSArray *)selectPhotos
+{
+    if ([self.imagePickerDelegate respondsToSelector:@selector(imagePickerController:didselectPhotos:)])
+    {
+        [self.imagePickerDelegate imagePickerController:self didselectPhotos:self.selectPhotoModels];
+    }
 }
 - (NSMutableArray *)selectPhotoModels
 {

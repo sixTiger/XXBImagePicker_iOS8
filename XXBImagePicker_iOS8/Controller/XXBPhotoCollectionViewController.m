@@ -80,11 +80,11 @@ static CGSize AssetGridThumbnailSize;
 
 - (void)imagePickerTabrFinishClick
 {
-#warning todo 通知父控件点击了完成按钮
+    [self.delegate photoCollectionViewController:self didselectPhotos:self.selectPhotoModels];
 }
-- (void)setPhotoModleArray:(NSArray *)photoModleArray
+- (void)setPhotoGroupModel:(XXBPhotoGroupModel *)photoGroupModel
 {
-    _photoModleArray = photoModleArray;
+    _photoGroupModel = photoGroupModel;
     [self.collectionView reloadData];
 }
 #pragma mark - UICollectionViewDataSource
@@ -99,14 +99,13 @@ static CGSize AssetGridThumbnailSize;
     if (kind == UICollectionElementKindSectionFooter){
         
         reusableview = [collectionView  dequeueReusableSupplementaryViewOfKind:UICollectionElementKindSectionFooter withReuseIdentifier:reuseFooterIdentifier forIndexPath:indexPath];
-        reusableview.photoCount = self.photoModleArray.count;
+        reusableview.photoCount = self.photoGroupModel.photoModelArray.count;
     }
     return reusableview;
 }
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
-    NSInteger count = self.photoModleArray.count;
-    return count;
+    return self.photoGroupModel.photoModelArray.count;
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
@@ -114,12 +113,13 @@ static CGSize AssetGridThumbnailSize;
     XXBPhotoCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:photoCollectionViewCell forIndexPath:indexPath];
     cell.tag = indexPath.row;
     cell.delegate = self;
-    cell.photoModel = self.photoModleArray[indexPath.row];
+    cell.photoModel = self.photoGroupModel.photoModelArray[indexPath.row];
     return cell;
 }
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
     XXBPicShowViewController *picShowViewController = [[XXBPicShowViewController alloc] init];
+    picShowViewController.photoGroupModel = self.photoGroupModel;
     picShowViewController.index = indexPath.row;
     [self.navigationController pushViewController:picShowViewController animated:YES];
 }

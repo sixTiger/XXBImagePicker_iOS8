@@ -8,12 +8,13 @@
 
 #import <UIKit/UIKit.h>
 #import <Photos/Photos.h>
+#import "XXBPhotoGroupModel.h"
 
 @interface XXBPicShowViewController : UIViewController
 /**
  *  相册组
  */
-@property (nonatomic, strong) PHFetchResult         *assetsFetchResults;
+@property(nonatomic , strong)XXBPhotoGroupModel     *photoGroupModel;
 /**
  *  当前下标
  */

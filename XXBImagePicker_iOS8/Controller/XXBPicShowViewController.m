@@ -10,20 +10,11 @@
 #import <Photos/Photos.h>
 #import "XXBPicShowView.h"
 #import "XXBPicShowCollectionViewCell.h"
-
-@implementation NSIndexSet (Convenience)
-- (NSArray *)aapl_indexPathsFromIndexesWithSection:(NSUInteger)section {
-    NSMutableArray *indexPaths = [NSMutableArray arrayWithCapacity:self.count];
-    [self enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
-        [indexPaths addObject:[NSIndexPath indexPathForItem:idx inSection:section]];
-    }];
-    return indexPaths;
-}
-@end
-@interface XXBPicShowViewController ()<PHPhotoLibraryChangeObserver,UICollectionViewDelegate,UICollectionViewDataSource,PHPhotoLibraryChangeObserver,XXBPicShowCollectionViewCellDelegate>
+#import "XXBPhotoModel.h"
+@interface XXBPicShowViewController ()<UICollectionViewDelegate,UICollectionViewDataSource,XXBPicShowCollectionViewCellDelegate>
 @property (strong) PHCachingImageManager            *imageManager;
 
-@property(nonatomic , weak)UICollectionView *collectionView;
+@property(nonatomic , weak)UICollectionView         *collectionView;
 @end
 
 @implementation XXBPicShowViewController
@@ -32,21 +23,11 @@ static NSString *CellReuseIdentifier = @"XXBPicShowCollectionViewCell";
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    if (self.assetsFetchResults.count > self.index)
+    if (self.photoGroupModel.photoModelArray.count > self.index)
     {
         NSIndexPath *indepath = [NSIndexPath indexPathForRow:self.index inSection:0];
         [self.collectionView scrollToItemAtIndexPath:indepath atScrollPosition:UICollectionViewScrollPositionNone animated:NO];
     }
-}
-- (void)dealloc
-{
-    [[PHPhotoLibrary sharedPhotoLibrary] unregisterChangeObserver:self];
-}
-
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-    [[PHPhotoLibrary sharedPhotoLibrary] registerChangeObserver:self];
 }
 - (UICollectionView *)collectionView
 {
@@ -71,65 +52,27 @@ static NSString *CellReuseIdentifier = @"XXBPicShowCollectionViewCell";
     }
     return _collectionView;
 }
-- (void)setAssetsFetchResults:(PHFetchResult *)assetsFetchResults
+- (void)setPhotoGroupModel:(XXBPhotoGroupModel *)photoGroupModel
 {
-    _assetsFetchResults = assetsFetchResults;
+    _photoGroupModel = photoGroupModel;
     [self.collectionView reloadData];
 }
 - (void)setIndex:(NSInteger)index
 {
     _index = index;
 }
-#pragma mark - PHPhotoLibraryChangeObserver
-
-- (void)photoLibraryDidChange:(PHChange *)changeInstance
-{
-    dispatch_async(dispatch_get_main_queue(), ^{
-        PHFetchResultChangeDetails *collectionChanges = [changeInstance changeDetailsForFetchResult:self.assetsFetchResults];
-        if (collectionChanges) {
-            self.assetsFetchResults = [collectionChanges fetchResultAfterChanges];
-            UICollectionView *collectionView = self.collectionView;
-            if (![collectionChanges hasIncrementalChanges] || [collectionChanges hasMoves])
-            {
-                [collectionView reloadData];
-                
-            }
-            else
-            {
-                [collectionView performBatchUpdates:^{
-                    NSIndexSet *removedIndexes = [collectionChanges removedIndexes];
-                    if ([removedIndexes count])
-                    {
-                        [collectionView deleteItemsAtIndexPaths:[removedIndexes aapl_indexPathsFromIndexesWithSection:0]];
-                    }
-                    NSIndexSet *insertedIndexes = [collectionChanges insertedIndexes];
-                    if ([insertedIndexes count]) {
-                        [collectionView insertItemsAtIndexPaths:[insertedIndexes aapl_indexPathsFromIndexesWithSection:0]];
-                    }
-                    NSIndexSet *changedIndexes = [collectionChanges changedIndexes];
-                    if ([changedIndexes count]) {
-                        [collectionView reloadItemsAtIndexPaths:[changedIndexes aapl_indexPathsFromIndexesWithSection:0]];
-                    }
-                } completion:NULL];
-            }
-            
-            [self resetCachedAssets];
-        }
-    });
-}
-
 #pragma mark - UICollectionViewDataSource
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
-    return self.assetsFetchResults.count;
+    return self.photoGroupModel.photoModelArray.count;
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     XXBPicShowCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:CellReuseIdentifier forIndexPath:indexPath];
-    PHAsset *asset = self.assetsFetchResults[indexPath.item];
-    cell.asset = asset;
+    XXBPhotoModel *photoModel = self.photoGroupModel.photoModelArray[indexPath.row];
+    cell.asset = photoModel.asset;
     cell.delegate = self;
     return cell;
 }
@@ -139,23 +82,5 @@ static NSString *CellReuseIdentifier = @"XXBPicShowCollectionViewCell";
 - (void)picShowCollectionViewCellSingletap:(XXBPicShowCollectionViewCell *)picShowCollectionViewCell
 {
     [self.navigationController setNavigationBarHidden:!self.navigationController.navigationBarHidden animated:YES];
-}
-#pragma mark - Asset Caching
-
-- (void)resetCachedAssets
-{
-    [self.imageManager stopCachingImagesForAllAssets];
-}
-
-- (NSArray *)assetsAtIndexPaths:(NSArray *)indexPaths
-{
-    if (indexPaths.count == 0) { return nil; }
-    
-    NSMutableArray *assets = [NSMutableArray arrayWithCapacity:indexPaths.count];
-    for (NSIndexPath *indexPath in indexPaths) {
-        PHAsset *asset = self.assetsFetchResults[indexPath.item];
-        [assets addObject:asset];
-    }
-    return assets;
 }
 @end
