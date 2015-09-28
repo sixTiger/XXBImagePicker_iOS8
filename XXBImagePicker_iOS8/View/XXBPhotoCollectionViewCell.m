@@ -27,8 +27,8 @@
     
     _photoModel = photoModel;
     _photoModel.tag = self.tag;
-    self.badgeValueButton.bageValue = _photoModel.index;
-    self.selectButton.selected = arc4random_uniform(255)%2 ;
+    self.badgeValueButton.badgeValue = _photoModel.index;
+    self.selectButton.selected = _photoModel.select ;
     [self p_updateImageAsync];
 }
 - (void)p_updateImageAsync
@@ -165,6 +165,5 @@
     selectButton.selected = !selectButton.selected;
     self.photoModel.select = !self.photoModel.select;
     [self.delegate photoCollectionViewCellSelectButtonDidclick:self];
-    NSLog(@"+++++++");
 }
 @end

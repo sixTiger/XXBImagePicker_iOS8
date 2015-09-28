@@ -21,5 +21,5 @@
 /**
  *  选中的相册的XXBPhotoModel
  */
-@property(nonatomic , strong)NSMutableArray 	*selectPhotoModel;
+@property(nonatomic , strong)NSMutableArray         *selectPhotoModels;
 @end

@@ -14,15 +14,30 @@
 {
     NSInteger _photoInRow;
 }
-@property(nonatomic , strong) NSArray *photoSectionArray;
-@property(nonatomic , strong) NSArray *photoSectionTitles;
-@property(nonatomic , strong) XXBPhotoCollectionViewController *photoCollectionViewController;
-@property (strong) PHCachingImageManager *imageManager;
-
-@property(nonatomic , strong)NSArray *photoRealSectionArray;
-
-
-@property(nonatomic , strong)NSMutableArray *photoGroupArray;
+/**
+ *  相册组
+ */
+@property(nonatomic , strong) NSArray                                   *photoSectionArray;
+/**
+ *  像个每一个section的标题
+ */
+@property(nonatomic , strong) NSArray                                   *photoSectionTitles;
+/**
+ *  相册的选择的collectionViewController
+ */
+@property(nonatomic , strong) XXBPhotoCollectionViewController          *photoCollectionViewController;
+/**
+ *  相册的管理者
+ */
+@property (strong) PHCachingImageManager                                *imageManager;
+/**
+ *  选中的相册模型
+ */
+@property(nonatomic , strong)NSArray                                    *photoRealSectionArray;
+/**
+ *  相册组
+ */
+@property(nonatomic , strong)                                           NSMutableArray *photoGroupArray;
 @end
 
 @implementation XXBPhotoGroupViewController
@@ -125,8 +140,6 @@ static NSString *photoGroupViewCellID = @"XXBPhotoGroupViewCellID";
         self.photoCollectionViewController.assetsFetchResults = countResult;
     }
     [self.navigationController pushViewController:self.photoCollectionViewController animated:YES];
-    
-    
 }
 #pragma mark - PHPhotoLibraryChangeObserver
 
@@ -190,6 +203,11 @@ static NSString *photoGroupViewCellID = @"XXBPhotoGroupViewCellID";
     self.photoSectionArray = photoSectionArray;
 }
 #pragma mark - 懒加载
+- (void)setSelectPhotoModels:(NSMutableArray *)selectPhotoModels
+{
+    _selectPhotoModels = selectPhotoModels;
+    self.photoCollectionViewController.selectPhotoModels = _selectPhotoModels;
+}
 - (void)setPhotoInRow:(NSInteger)photoInRow
 {
     _photoInRow = photoInRow;

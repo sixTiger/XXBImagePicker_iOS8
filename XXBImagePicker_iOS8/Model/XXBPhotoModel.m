@@ -9,8 +9,8 @@
 #import "XXBPhotoModel.h"
 
 @implementation XXBPhotoModel
-- (NSInteger)index
-{
-    return 0;
-}
+//- (NSInteger)index
+//{
+//    return arc4random_uniform(100);
+//}
 @end

@@ -7,12 +7,6 @@
 //
 
 #import "XXBBadgeValueBtn.h"
-/**
- *  注意，左右会有一个像素的偏差，右边的需要比左边的少2
- */
-#define marginLeft 5.5
-#define marginRight 5.5
-
 @implementation XXBBadgeValueBtn
 - (instancetype)initWithCoder:(NSCoder *)aDecoder
 {
@@ -34,38 +28,28 @@
     self.hidden = YES;
     self.userInteractionEnabled = NO;
     self.titleLabel.font = [UIFont systemFontOfSize:14];
-    /**
-     *  微调文字的位置
-     */
-    self.titleEdgeInsets = UIEdgeInsetsMake(0, marginLeft, 0, marginRight) ;
-    UIImage *bgImage = [UIImage imageNamed:@"XXBImagePicker.bundle/XXBPageNumber"];
-    [self setBackgroundImage:[bgImage stretchableImageWithLeftCapWidth:bgImage.size.width * 0.5 topCapHeight:bgImage.size.height * 0.5] forState:UIControlStateNormal];
+    self.backgroundColor = [UIColor orangeColor];
+    self.clipsToBounds = YES;
 }
-- (void)setBageValue:(NSInteger)bageValue
+- (void)setBadgeValue:(NSInteger)badgeValue
 {
-    _bageValue = bageValue;
-    if (_bageValue >0)
+    _badgeValue = badgeValue;
+    if (_badgeValue >0)
     {
+        
+        NSString *bageString = [NSString stringWithFormat:@"%@",@(_badgeValue)];
         /**
          *  有值并且值不等于1 的情况向才进行相关设置
          */
         self.hidden = NO;
-        if (_bageValue > 99)
+        if (_badgeValue > maxBadgeValue)
         {
-            _bageValue= 99;
+            _badgeValue= maxBadgeValue;
+            
+            bageString = [NSString stringWithFormat:@"%@+",@(_badgeValue)];
         }
-        NSString *bageString = [NSString stringWithFormat:@"%@",@(_bageValue)];
         [self setTitle:bageString forState:UIControlStateNormal];
-        // 根据文字的多少动态计算frame
-        CGRect frame = self.frame;
-        CGFloat badgeH = self.currentBackgroundImage.size.height;
-        CGFloat badgeW ;
-        NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-        dict[NSFontAttributeName] = self.titleLabel.font;
-        CGSize badgeSize =  [bageString boundingRectWithSize:CGSizeMake(MAXFLOAT, MAXFLOAT) options:NSStringDrawingUsesLineFragmentOrigin attributes:dict context:nil].size;
-        badgeW = badgeSize.width + marginLeft +marginRight;        frame.size.width = badgeW + 1.0;
-        frame.size.height = badgeH;
-        self.frame = frame;
+        [self p_setupFrame];
     }
     else
     {
@@ -74,5 +58,28 @@
          */
         self.hidden = YES;
     }
+}
+- (void)p_setupFrame
+{
+    // 根据文字的多少动态计算frame
+    [self sizeToFit];
+    CGRect frame = self.frame;
+    CGFloat badgeH = self.titleLabel.frame.size.height > 0 ? self.titleLabel.frame.size.height : 17;
+    badgeH += 4;
+    CGFloat length = 0.6;
+    NSInteger temp = _badgeValue;
+    if (temp == maxBadgeValue)
+    {
+        temp++;
+    }
+    while (temp)
+    {
+        length += 0.4;
+        temp /= 10;
+    }
+    frame.size.height = badgeH;
+    frame.size.width = length * badgeH;
+    self.layer.cornerRadius = badgeH * 0.5;
+    self.frame = frame;
 }
 @end

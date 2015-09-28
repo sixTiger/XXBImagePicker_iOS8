@@ -11,7 +11,16 @@
 #import "XXBPicShowViewController.h"
 #import "XXBPhotoCollectionViewCell.h"
 #import "XXBPhotoModel.h"
-@interface XXBPhotoCollectionViewController ()<PHPhotoLibraryChangeObserver>
+@implementation NSIndexSet (Convenience)
+- (NSArray *)aapl_indexPathsFromIndexesWithSection:(NSUInteger)section {
+    NSMutableArray *indexPaths = [NSMutableArray arrayWithCapacity:self.count];
+    [self enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+        [indexPaths addObject:[NSIndexPath indexPathForItem:idx inSection:section]];
+    }];
+    return indexPaths;
+}
+@end
+@interface XXBPhotoCollectionViewController ()<PHPhotoLibraryChangeObserver,XXBPhotoCollectionViewCellDelegate>
 @property (strong) PHCachingImageManager *imageManager;
 @property CGRect previousPreheatRect;
 @end
@@ -43,11 +52,6 @@ static CGSize AssetGridThumbnailSize;
     CGSize cellSize = ((UICollectionViewFlowLayout *)self.collectionViewLayout).itemSize;
     AssetGridThumbnailSize = CGSizeMake(cellSize.width * scale, cellSize.height * scale);
 }
-- (void)viewDidAppear:(BOOL)animated
-{
-    [super viewDidAppear:animated];
-    [self updateCachedAssets];
-}
 - (void)p_setupCollectionView
 {
     self.imageManager = [[PHCachingImageManager alloc] init];
@@ -73,36 +77,36 @@ static CGSize AssetGridThumbnailSize;
 
 - (void)photoLibraryDidChange:(PHChange *)changeInstance
 {
-//    dispatch_async(dispatch_get_main_queue(), ^{
-//        PHFetchResultChangeDetails *collectionChanges = [changeInstance changeDetailsForFetchResult:self.assetsFetchResults];
-//        if (collectionChanges) {
-//            self.assetsFetchResults = [collectionChanges fetchResultAfterChanges];
-//            UICollectionView *collectionView = self.collectionView;
-//            if (![collectionChanges hasIncrementalChanges] || [collectionChanges hasMoves])
-//            {
-//                [collectionView reloadData];
-//                
-//            }
-//            else
-//            {
-//                [collectionView performBatchUpdates:^{
-//                    NSIndexSet *removedIndexes = [collectionChanges removedIndexes];
-//                    if ([removedIndexes count])
-//                    {
-//                        [collectionView deleteItemsAtIndexPaths:[removedIndexes aapl_indexPathsFromIndexesWithSection:0]];
-//                    }
-//                    NSIndexSet *insertedIndexes = [collectionChanges insertedIndexes];
-//                    if ([insertedIndexes count]) {
-//                        [collectionView insertItemsAtIndexPaths:[insertedIndexes aapl_indexPathsFromIndexesWithSection:0]];
-//                    }
-//                    NSIndexSet *changedIndexes = [collectionChanges changedIndexes];
-//                    if ([changedIndexes count]) {
-//                        [collectionView reloadItemsAtIndexPaths:[changedIndexes aapl_indexPathsFromIndexesWithSection:0]];
-//                    }
-//                } completion:NULL];
-//            }
-//        }
-//    });
+    dispatch_async(dispatch_get_main_queue(), ^{
+        PHFetchResultChangeDetails *collectionChanges = [changeInstance changeDetailsForFetchResult:self.assetsFetchResults];
+        if (collectionChanges) {
+            self.assetsFetchResults = [collectionChanges fetchResultAfterChanges];
+            UICollectionView *collectionView = self.collectionView;
+            if (![collectionChanges hasIncrementalChanges] || [collectionChanges hasMoves])
+            {
+                [collectionView reloadData];
+                
+            }
+            else
+            {
+                [collectionView performBatchUpdates:^{
+                    NSIndexSet *removedIndexes = [collectionChanges removedIndexes];
+                    if ([removedIndexes count])
+                    {
+                        [collectionView deleteItemsAtIndexPaths:[removedIndexes aapl_indexPathsFromIndexesWithSection:0]];
+                    }
+                    NSIndexSet *insertedIndexes = [collectionChanges insertedIndexes];
+                    if ([insertedIndexes count]) {
+                        [collectionView insertItemsAtIndexPaths:[insertedIndexes aapl_indexPathsFromIndexesWithSection:0]];
+                    }
+                    NSIndexSet *changedIndexes = [collectionChanges changedIndexes];
+                    if ([changedIndexes count]) {
+                        [collectionView reloadItemsAtIndexPaths:[changedIndexes aapl_indexPathsFromIndexesWithSection:0]];
+                    }
+                } completion:NULL];
+            }
+        }
+    });
 }
 
 #pragma mark - UICollectionViewDataSource
@@ -117,7 +121,7 @@ static CGSize AssetGridThumbnailSize;
 {
     XXBPhotoCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:photoCollectionViewCell forIndexPath:indexPath];
     cell.tag = indexPath.row;
-    
+    cell.delegate = self;
     cell.photoModel = self.photoModleArray[indexPath.row];
     return cell;
 }
@@ -128,98 +132,34 @@ static CGSize AssetGridThumbnailSize;
     picShowViewController.index = indexPath.row;
     [self.navigationController pushViewController:picShowViewController animated:YES];
 }
-#pragma mark - UIScrollViewDelegate
-
-- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+- (void)photoCollectionViewCellSelectButtonDidclick:(XXBPhotoCollectionViewCell *)photoCollectionViewCell
 {
-    [self updateCachedAssets];
-}
-
-#pragma mark - Asset Caching
-
-
-
-- (void)updateCachedAssets
-{
-//    BOOL isViewVisible = [self isViewLoaded] && [[self view] window] != nil;
-//    if (!isViewVisible)
-//        return;
-//    CGRect preheatRect = self.collectionView.bounds;
-//    preheatRect = CGRectInset(preheatRect, 0.0f, -0.5f * CGRectGetHeight(preheatRect));
-//    CGFloat delta = ABS(CGRectGetMidY(preheatRect) - CGRectGetMidY(self.previousPreheatRect));
-//    if (delta > CGRectGetHeight(self.collectionView.bounds) / 3.0f)
-//    {
-//        NSMutableArray *addedIndexPaths = [NSMutableArray array];
-//        NSMutableArray *removedIndexPaths = [NSMutableArray array];
-//        [self computeDifferenceBetweenRect:self.previousPreheatRect andRect:preheatRect removedHandler:^(CGRect removedRect) {
-//            NSArray *indexPaths = [self.collectionView aapl_indexPathsForElementsInRect:removedRect];
-//            [removedIndexPaths addObjectsFromArray:indexPaths];
-//        } addedHandler:^(CGRect addedRect) {
-//            NSArray *indexPaths = [self.collectionView aapl_indexPathsForElementsInRect:addedRect];
-//            [addedIndexPaths addObjectsFromArray:indexPaths];
-//        }];
-//        
-//        NSArray *assetsToStartCaching = [self assetsAtIndexPaths:addedIndexPaths];
-//        NSArray *assetsToStopCaching = [self assetsAtIndexPaths:removedIndexPaths];
-//        
-//        [self.imageManager startCachingImagesForAssets:assetsToStartCaching
-//                                            targetSize:AssetGridThumbnailSize
-//                                           contentMode:PHImageContentModeAspectFill
-//                                               options:nil];
-//        [self.imageManager stopCachingImagesForAssets:assetsToStopCaching
-//                                           targetSize:AssetGridThumbnailSize
-//                                          contentMode:PHImageContentModeAspectFill
-//                                              options:nil];
-//        self.previousPreheatRect = preheatRect;
-//    }
-}
-- (void)computeDifferenceBetweenRect:(CGRect)oldRect andRect:(CGRect)newRect removedHandler:(void (^)(CGRect removedRect))removedHandler addedHandler:(void (^)(CGRect addedRect))addedHandler
-{
-    if (CGRectIntersectsRect(newRect, oldRect))
+    XXBPhotoModel *photoModel = photoCollectionViewCell.photoModel;
+    NSInteger index = [self.selectPhotoModels indexOfObject:photoModel];
+    if (index != NSNotFound)
     {
-        CGFloat oldMaxY = CGRectGetMaxY(oldRect);
-        CGFloat oldMinY = CGRectGetMinY(oldRect);
-        CGFloat newMaxY = CGRectGetMaxY(newRect);
-        CGFloat newMinY = CGRectGetMinY(newRect);
-        if (newMaxY > oldMaxY)
+        /**
+         *  没有找到就删除
+         */
+        photoModel.index = 0;
+        [self.selectPhotoModels removeObjectAtIndex:index];
+        NSInteger count = self.selectPhotoModels.count;
+        for (NSInteger i = index; i < count; i++)
         {
-            CGRect rectToAdd = CGRectMake(newRect.origin.x, oldMaxY, newRect.size.width, (newMaxY - oldMaxY));
-            addedHandler(rectToAdd);
-        }
-        if (oldMinY > newMinY)
-        {
-            CGRect rectToAdd = CGRectMake(newRect.origin.x, newMinY, newRect.size.width, (oldMinY - newMinY));
-            addedHandler(rectToAdd);
-        }
-        if (newMaxY < oldMaxY)
-        {
-            CGRect rectToRemove = CGRectMake(newRect.origin.x, newMaxY, newRect.size.width, (oldMaxY - newMaxY));
-            removedHandler(rectToRemove);
-        }
-        if (oldMinY < newMinY)
-        {
-            CGRect rectToRemove = CGRectMake(newRect.origin.x, oldMinY, newRect.size.width, (newMinY - oldMinY));
-            removedHandler(rectToRemove);
+            XXBPhotoModel *photoModel = self.selectPhotoModels[i];
+            photoModel.index -- ;
         }
     }
     else
     {
-        addedHandler(newRect);
-        removedHandler(oldRect);
+        /**
+         *  找到之后加入选择的数组里边
+         */
+        [self.selectPhotoModels addObject:photoModel];
+        photoModel.index = self.selectPhotoModels.count;
     }
+    [self.collectionView reloadData];
 }
-- (NSArray *)assetsAtIndexPaths:(NSArray *)indexPaths
-{
-    if (indexPaths.count == 0) { return nil; }
-    
-    NSMutableArray *assets = [NSMutableArray arrayWithCapacity:indexPaths.count];
-    for (NSIndexPath *indexPath in indexPaths) {
-        PHAsset *asset = self.assetsFetchResults[indexPath.item];
-        [assets addObject:asset];
-    }
-    return assets;
-}
-
 #pragma mark - 添加照片
 - (void)handleAddButtonItem:(id)sender
 {

@@ -51,7 +51,7 @@ typedef enum : NSUInteger {
  *
  *  原来选中的photo的相关信息 默认为空
  */
-@property(nonatomic , strong)NSMutableArray *selectPhotoModel;
+@property(nonatomic , strong)NSMutableArray *selectPhotoModels;
 /**
  *  是否显示数字标签
  */

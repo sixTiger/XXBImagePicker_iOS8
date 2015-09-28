@@ -20,7 +20,7 @@
 /**
  *  选中的相册的XXBPhotoModel
  */
-@property(nonatomic , strong)NSMutableArray 	*selectPhotoModel;
+@property(nonatomic , strong)NSMutableArray 	*selectPhotoModels;
 /**
  *  是否显示数字标签
  */
