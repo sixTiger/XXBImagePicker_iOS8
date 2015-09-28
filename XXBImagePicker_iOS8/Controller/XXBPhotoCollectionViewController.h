@@ -27,10 +27,6 @@
 @end
 @interface XXBPhotoCollectionViewController : UICollectionViewController
 /**
- *  照片组的先关信息
- */
-@property (nonatomic, strong) PHFetchResult         *assetsFetchResults;
-/**
  *  所有的照片的模型
  */
 @property(nonatomic , strong) NSArray               *photoModleArray;

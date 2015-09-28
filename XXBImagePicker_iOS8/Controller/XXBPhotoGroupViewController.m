@@ -61,6 +61,7 @@ static NSString *photoGroupViewCellID = @"XXBPhotoGroupViewCellID";
 {
     [self setupItems];
     [self p_excludeEmptyCollections];
+    [self p_creatPhotoSectionModelArray];
     [self.tableView registerClass:[XXBPhotoGroupTableViewCell class] forCellReuseIdentifier:photoGroupViewCellID];
     self.tableView.rowHeight = 60;
     [[PHPhotoLibrary sharedPhotoLibrary] registerChangeObserver:self];
@@ -82,66 +83,25 @@ static NSString *photoGroupViewCellID = @"XXBPhotoGroupViewCellID";
 }
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return 1 + self.photoSectionArray.count;
+    return self.photoSectionModelArray.count;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    NSInteger numberOfRows = 0;
-    if (section == 0)
-    {
-        numberOfRows = 1;
-    }
-    else
-    {
-        numberOfRows = [self.photoSectionArray[section - 1] count];
-    }
-    return numberOfRows;
+    return [self.photoSectionModelArray[section] count];
 }
-
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     XXBPhotoGroupTableViewCell *cell = nil;
     cell = [tableView dequeueReusableCellWithIdentifier:photoGroupViewCellID];
-    if (indexPath.section == 0)
-    {
-        PHFetchOptions *options = [[PHFetchOptions alloc] init];
-        options.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"creationDate" ascending:YES]];
-        /**
-         *  只要照片
-         */
-        [options setPredicate:[NSPredicate predicateWithFormat:@"mediaType == %d", PHAssetMediaTypeImage]];
-        PHFetchResult *countResult = [PHAsset fetchAssetsWithOptions:options];
-        PHAssetCollection *assetCollection = [PHAssetCollection transientAssetCollectionWithAssetFetchResult:countResult title:@"所有照片"];
-        cell.assetCollection = assetCollection;
-    }
-    else
-    {
-        cell.assetCollection = self.photoSectionArray[indexPath.section - 1][indexPath.row];
-    }
-    
+        XXBPhotoGroupModel *photoGroupModel = self.photoSectionModelArray[indexPath.section ][indexPath.row];
+        cell.assetCollection = photoGroupModel.assetCollection;
     return cell;
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    if (indexPath.section == 0)
-    {
-        PHFetchOptions *options = [[PHFetchOptions alloc] init];
-        options.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"creationDate" ascending:YES]];
-        /**
-         *  只要照片
-         */
-        [options setPredicate:[NSPredicate predicateWithFormat:@"mediaType == %d", PHAssetMediaTypeImage]];
-        PHFetchResult *countResult = [PHAsset fetchAssetsWithOptions:options];
-        self.photoCollectionViewController.assetsFetchResults = countResult;
-    }
-    else
-    {
-        PHAssetCollection *assetCollection = self.photoSectionArray[indexPath.section -1 ][indexPath.row];
-        PHFetchResult *countResult = [PHAsset fetchAssetsInAssetCollection:assetCollection options:nil];
-        self.photoCollectionViewController.assetsFetchResults = countResult;
-    }
+        XXBPhotoGroupModel *photoGroupModel = self.photoSectionModelArray[indexPath.section ][indexPath.row];
+        self.photoCollectionViewController.photoModleArray = photoGroupModel.photoModelArray;
     [self.navigationController pushViewController:self.photoCollectionViewController animated:YES];
 }
 #pragma mark - PHPhotoLibraryChangeObserver
@@ -205,10 +165,23 @@ static NSString *photoGroupViewCellID = @"XXBPhotoGroupViewCellID";
     
     self.photoSectionArray = photoSectionArray;
 }
-- (void)setPhotoSectionArray:(NSArray *)photoSectionArray
+- (void)p_creatPhotoSectionModelArray
 {
-    _photoSectionArray = photoSectionArray;
     [self.photoSectionModelArray removeAllObjects];
+    PHFetchOptions *options = [[PHFetchOptions alloc] init];
+    options.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"creationDate" ascending:YES]];
+    /**
+     *  只要照片
+     */
+    [options setPredicate:[NSPredicate predicateWithFormat:@"mediaType == %d", PHAssetMediaTypeImage]];
+    PHFetchResult *countResult = [PHAsset fetchAssetsWithOptions:options];
+    PHAssetCollection *assetCollection = [PHAssetCollection transientAssetCollectionWithAssetFetchResult:countResult title:@"所有照片"];
+    NSMutableArray *section_0 = [NSMutableArray array];
+    XXBPhotoGroupModel *photoGroupModel = [[XXBPhotoGroupModel alloc] init];
+    photoGroupModel.assetCollection = assetCollection;
+    [section_0 addObject:photoGroupModel];
+    [self.photoSectionModelArray addObject:section_0];
+
     for (PHFetchResult *assetsFetchResults in _photoSectionArray)
     {
         NSMutableArray *array = [NSMutableArray array];

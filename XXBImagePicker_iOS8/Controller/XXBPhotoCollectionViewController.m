@@ -13,18 +13,9 @@
 #import "XXBPhotoModel.h"
 #import "XXBImagePickerTabr.h"
 #import "XXBPhotoCollectionFootView.h"
-@implementation NSIndexSet (Convenience)
-- (NSArray *)aapl_indexPathsFromIndexesWithSection:(NSUInteger)section
-{
-    NSMutableArray *indexPaths = [NSMutableArray arrayWithCapacity:self.count];
-    [self enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
-        [indexPaths addObject:[NSIndexPath indexPathForItem:idx inSection:section]];
-    }];
-    return indexPaths;
-}
-@end
 
-@interface XXBPhotoCollectionViewController ()<PHPhotoLibraryChangeObserver,XXBPhotoCollectionViewCellDelegate,XXBImagePickerTabrDelegate>
+
+@interface XXBPhotoCollectionViewController ()<XXBPhotoCollectionViewCellDelegate,XXBImagePickerTabrDelegate>
 @property (strong) PHCachingImageManager        *imageManager;
 
 @property(nonatomic , weak)XXBImagePickerTabr   *imagePickerTar;
@@ -45,10 +36,6 @@ static CGSize AssetGridThumbnailSize;
     }
     return self;
 }
-- (void)dealloc
-{
-    [[PHPhotoLibrary sharedPhotoLibrary] unregisterChangeObserver:self];
-}
 
 - (void)viewWillAppear:(BOOL)animated
 {
@@ -62,7 +49,6 @@ static CGSize AssetGridThumbnailSize;
 {
     [self p_setupImagePickerTar];
     self.imageManager = [[PHCachingImageManager alloc] init];
-    [[PHPhotoLibrary sharedPhotoLibrary] registerChangeObserver:self];
     [self.collectionView registerClass:[XXBPhotoCollectionViewCell class] forCellWithReuseIdentifier:photoCollectionViewCell];
     [self.collectionView registerClass:[XXBPhotoCollectionFootView class] forSupplementaryViewOfKind:UICollectionElementKindSectionFooter withReuseIdentifier:reuseFooterIdentifier];
     self.collectionView.backgroundColor = [UIColor colorWithRed:232/255.0 green:232/255.0 blue:232/255.0 alpha:1.0];
@@ -89,59 +75,17 @@ static CGSize AssetGridThumbnailSize;
     _imagePickerTar = imagePickerTar;
     _imagePickerTar.delegate = self;
 }
-- (void)setAssetsFetchResults:(PHFetchResult *)assetsFetchResults
-{
-    _assetsFetchResults = assetsFetchResults;
-    NSMutableArray *array = [NSMutableArray array];
-    for (int i = 0; i< assetsFetchResults.count; i++)
-    {
-        XXBPhotoModel *photoModel = [[XXBPhotoModel alloc] init];
-        photoModel.asset = assetsFetchResults[i];
-        [array addObject:photoModel];
-    }
-    self.photoModleArray = [array copy];
-    [self.collectionView reloadData];
-}
-#pragma mark - PHPhotoLibraryChangeObserver
 
-- (void)photoLibraryDidChange:(PHChange *)changeInstance
-{
-    dispatch_async(dispatch_get_main_queue(), ^{
-        PHFetchResultChangeDetails *collectionChanges = [changeInstance changeDetailsForFetchResult:self.assetsFetchResults];
-        if (collectionChanges) {
-            self.assetsFetchResults = [collectionChanges fetchResultAfterChanges];
-            UICollectionView *collectionView = self.collectionView;
-            if (![collectionChanges hasIncrementalChanges] || [collectionChanges hasMoves])
-            {
-                [collectionView reloadData];
-                
-            }
-            else
-            {
-                [collectionView performBatchUpdates:^{
-                    NSIndexSet *removedIndexes = [collectionChanges removedIndexes];
-                    if ([removedIndexes count])
-                    {
-                        [collectionView deleteItemsAtIndexPaths:[removedIndexes aapl_indexPathsFromIndexesWithSection:0]];
-                    }
-                    NSIndexSet *insertedIndexes = [collectionChanges insertedIndexes];
-                    if ([insertedIndexes count]) {
-                        [collectionView insertItemsAtIndexPaths:[insertedIndexes aapl_indexPathsFromIndexesWithSection:0]];
-                    }
-                    NSIndexSet *changedIndexes = [collectionChanges changedIndexes];
-                    if ([changedIndexes count]) {
-                        [collectionView reloadItemsAtIndexPaths:[changedIndexes aapl_indexPathsFromIndexesWithSection:0]];
-                    }
-                } completion:NULL];
-            }
-        }
-    });
-}
 #pragma mark - XXBImagePickerTabrDelegate
 
 - (void)imagePickerTabrFinishClick
 {
 #warning todo 通知父控件点击了完成按钮
+}
+- (void)setPhotoModleArray:(NSArray *)photoModleArray
+{
+    _photoModleArray = photoModleArray;
+    [self.collectionView reloadData];
 }
 #pragma mark - UICollectionViewDataSource
 - (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath
@@ -176,7 +120,6 @@ static CGSize AssetGridThumbnailSize;
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
     XXBPicShowViewController *picShowViewController = [[XXBPicShowViewController alloc] init];
-    picShowViewController.assetsFetchResults = self.assetsFetchResults;
     picShowViewController.index = indexPath.row;
     [self.navigationController pushViewController:picShowViewController animated:YES];
 }

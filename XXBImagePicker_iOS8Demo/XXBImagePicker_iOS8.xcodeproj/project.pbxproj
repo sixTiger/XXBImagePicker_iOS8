@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		620BC66C1BB2A5BD000278E7 /* XXBPicShowViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 620BC66B1BB2A5BD000278E7 /* XXBPicShowViewController.m */; settings = {ASSET_TAGS = (); }; };
 		625172C11BB8D489005F39D2 /* XXBBadgeValueBtn.m in Sources */ = {isa = PBXBuildFile; fileRef = 625172C01BB8D489005F39D2 /* XXBBadgeValueBtn.m */; settings = {ASSET_TAGS = (); }; };
-		625172C31BB8DB1F005F39D2 /* XXBImagePicker.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 625172C21BB8DB1F005F39D2 /* XXBImagePicker.bundle */; settings = {ASSET_TAGS = (); }; };
 		625172C61BB92CCE005F39D2 /* XXBImagePickerTabr.m in Sources */ = {isa = PBXBuildFile; fileRef = 625172C51BB92CCE005F39D2 /* XXBImagePickerTabr.m */; settings = {ASSET_TAGS = (); }; };
 		625172C91BB94023005F39D2 /* XXBPhotoCollectionFootView.m in Sources */ = {isa = PBXBuildFile; fileRef = 625172C81BB94023005F39D2 /* XXBPhotoCollectionFootView.m */; settings = {ASSET_TAGS = (); }; };
 		625172CC1BB94BC6005F39D2 /* XXBPhotoGroupModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 625172CB1BB94BC6005F39D2 /* XXBPhotoGroupModel.m */; settings = {ASSET_TAGS = (); }; };
@@ -27,6 +26,7 @@
 		62A2E5231B8FF7B700CD1DDF /* XXBPhotoGroupViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 62A2E5221B8FF7B700CD1DDF /* XXBPhotoGroupViewController.m */; };
 		62A2E5261B9032AB00CD1DDF /* XXBPhotoGroupTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 62A2E5251B9032AB00CD1DDF /* XXBPhotoGroupTableViewCell.m */; };
 		62A2E5291B903F1F00CD1DDF /* XXBPhotoCollectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 62A2E5281B903F1F00CD1DDF /* XXBPhotoCollectionViewController.m */; };
+		62CF35741BB9708300306078 /* XXBImagePicker.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 62CF35731BB9708300306078 /* XXBImagePicker.bundle */; settings = {ASSET_TAGS = (); }; };
 		62DC5DE31BB39D7C0083F079 /* XXBPicShowView.m in Sources */ = {isa = PBXBuildFile; fileRef = 62DC5DE21BB39D7C0083F079 /* XXBPicShowView.m */; settings = {ASSET_TAGS = (); }; };
 		62DC5DE61BB3BCE70083F079 /* XXBPicShowCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 62DC5DE51BB3BCE70083F079 /* XXBPicShowCollectionViewCell.m */; settings = {ASSET_TAGS = (); }; };
 		62DC5DE91BB3E5F70083F079 /* XXBPhotoCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 62DC5DE81BB3E5F70083F079 /* XXBPhotoCollectionViewCell.m */; settings = {ASSET_TAGS = (); }; };
@@ -48,7 +48,6 @@
 		620BC66B1BB2A5BD000278E7 /* XXBPicShowViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XXBPicShowViewController.m; sourceTree = "<group>"; };
 		625172BF1BB8D489005F39D2 /* XXBBadgeValueBtn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XXBBadgeValueBtn.h; sourceTree = "<group>"; };
 		625172C01BB8D489005F39D2 /* XXBBadgeValueBtn.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XXBBadgeValueBtn.m; sourceTree = "<group>"; };
-		625172C21BB8DB1F005F39D2 /* XXBImagePicker.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = XXBImagePicker.bundle; sourceTree = "<group>"; };
 		625172C41BB92CCE005F39D2 /* XXBImagePickerTabr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XXBImagePickerTabr.h; sourceTree = "<group>"; };
 		625172C51BB92CCE005F39D2 /* XXBImagePickerTabr.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XXBImagePickerTabr.m; sourceTree = "<group>"; };
 		625172C71BB94023005F39D2 /* XXBPhotoCollectionFootView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XXBPhotoCollectionFootView.h; sourceTree = "<group>"; };
@@ -81,6 +80,7 @@
 		62A2E5251B9032AB00CD1DDF /* XXBPhotoGroupTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XXBPhotoGroupTableViewCell.m; sourceTree = "<group>"; };
 		62A2E5271B903F1F00CD1DDF /* XXBPhotoCollectionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XXBPhotoCollectionViewController.h; sourceTree = "<group>"; };
 		62A2E5281B903F1F00CD1DDF /* XXBPhotoCollectionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XXBPhotoCollectionViewController.m; sourceTree = "<group>"; };
+		62CF35731BB9708300306078 /* XXBImagePicker.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = XXBImagePicker.bundle; sourceTree = "<group>"; };
 		62DC5DE11BB39D7C0083F079 /* XXBPicShowView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XXBPicShowView.h; sourceTree = "<group>"; };
 		62DC5DE21BB39D7C0083F079 /* XXBPicShowView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XXBPicShowView.m; sourceTree = "<group>"; };
 		62DC5DE41BB3BCE70083F079 /* XXBPicShowCollectionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XXBPicShowCollectionViewCell.h; sourceTree = "<group>"; };
@@ -173,7 +173,7 @@
 		62A2E50E1B8FF0F600CD1DDF /* XXBImagePicker_iOS8 */ = {
 			isa = PBXGroup;
 			children = (
-				625172C21BB8DB1F005F39D2 /* XXBImagePicker.bundle */,
+				62CF35731BB9708300306078 /* XXBImagePicker.bundle */,
 				62DC5DED1BB3EBB00083F079 /* Model */,
 				62A2E5121B8FF49500CD1DDF /* Controller */,
 				62A2E5161B8FF49500CD1DDF /* View */,
@@ -325,7 +325,7 @@
 				62A2E4F41B8FEFF500CD1DDF /* Main.storyboard in Resources */,
 				62A2E51F1B8FF71000CD1DDF /* MBProgressHUD.bundle in Resources */,
 				62A2E4F91B8FEFF500CD1DDF /* LaunchScreen.xib in Resources */,
-				625172C31BB8DB1F005F39D2 /* XXBImagePicker.bundle in Resources */,
+				62CF35741BB9708300306078 /* XXBImagePicker.bundle in Resources */,
 				62A2E4F61B8FEFF500CD1DDF /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
