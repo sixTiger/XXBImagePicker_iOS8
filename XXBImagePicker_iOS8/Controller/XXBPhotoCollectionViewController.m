@@ -24,8 +24,6 @@
 }
 @end
 
-
-
 @interface XXBPhotoCollectionViewController ()<PHPhotoLibraryChangeObserver,XXBPhotoCollectionViewCellDelegate,XXBImagePickerTabrDelegate>
 @property (strong) PHCachingImageManager        *imageManager;
 
@@ -47,7 +45,6 @@ static CGSize AssetGridThumbnailSize;
     }
     return self;
 }
-
 - (void)dealloc
 {
     [[PHPhotoLibrary sharedPhotoLibrary] unregisterChangeObserver:self];

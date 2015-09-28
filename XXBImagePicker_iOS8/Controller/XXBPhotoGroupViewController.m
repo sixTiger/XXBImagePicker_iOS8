@@ -34,10 +34,7 @@
  *  选中的相册模型
  */
 @property(nonatomic , strong)NSArray                                    *photoRealSectionArray;
-/**
- *  相册组
- */
-@property(nonatomic , strong)                                           NSMutableArray *photoGroupArray;
+
 @end
 
 @implementation XXBPhotoGroupViewController
@@ -191,7 +188,6 @@ static NSString *photoGroupViewCellID = @"XXBPhotoGroupViewCellID";
                  if (!([assetCollection.localizedTitle isEqualToString:@"All Photos"] || [assetCollection.localizedTitle isEqualToString:@"所有照片"]))
                  {
                      [filteredCollections addObject:assetCollection];
-                     NSLog(@"%@",assetCollection.localizedTitle);
                  }
              }
          }];
@@ -200,6 +196,7 @@ static NSString *photoGroupViewCellID = @"XXBPhotoGroupViewCellID";
             [photoSectionArray addObject:filteredCollections];
         }
     }
+    
     self.photoSectionArray = photoSectionArray;
 }
 #pragma mark - 懒加载
@@ -273,13 +270,5 @@ static NSString *photoGroupViewCellID = @"XXBPhotoGroupViewCellID";
         self.photoSectionTitles = @[@"所有照片",@"系统相册",@"个人相册"];
     }
     return _photoSectionTitles;
-}
-- (NSMutableArray *)photoGroupArray
-{
-    if (_photoGroupArray == nil)
-    {
-        _photoGroupArray = [NSMutableArray array];
-    }
-    return _photoGroupArray;
 }
 @end
