@@ -11,8 +11,11 @@
 #import "XXBPicShowViewController.h"
 #import "XXBPhotoCollectionViewCell.h"
 #import "XXBPhotoModel.h"
+#import "XXBImagePickerTabr.h"
+#import "XXBPhotoCollectionFootView.h"
 @implementation NSIndexSet (Convenience)
-- (NSArray *)aapl_indexPathsFromIndexesWithSection:(NSUInteger)section {
+- (NSArray *)aapl_indexPathsFromIndexesWithSection:(NSUInteger)section
+{
     NSMutableArray *indexPaths = [NSMutableArray arrayWithCapacity:self.count];
     [self enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
         [indexPaths addObject:[NSIndexPath indexPathForItem:idx inSection:section]];
@@ -20,14 +23,20 @@
     return indexPaths;
 }
 @end
-@interface XXBPhotoCollectionViewController ()<PHPhotoLibraryChangeObserver,XXBPhotoCollectionViewCellDelegate>
-@property (strong) PHCachingImageManager *imageManager;
+
+
+
+@interface XXBPhotoCollectionViewController ()<PHPhotoLibraryChangeObserver,XXBPhotoCollectionViewCellDelegate,XXBImagePickerTabrDelegate>
+@property (strong) PHCachingImageManager        *imageManager;
+
+@property(nonatomic , weak)XXBImagePickerTabr   *imagePickerTar;
 @property CGRect previousPreheatRect;
 @end
 
 @implementation XXBPhotoCollectionViewController
 
 static NSString * const photoCollectionViewCell = @"XXBPhotoCollectionViewCell";
+static NSString * const reuseFooterIdentifier = @"XXBPhotoCollectionFootView";
 static CGSize AssetGridThumbnailSize;
 
 - (instancetype)initWithCollectionViewLayout:(UICollectionViewLayout *)layout
@@ -54,11 +63,34 @@ static CGSize AssetGridThumbnailSize;
 }
 - (void)p_setupCollectionView
 {
+    [self p_setupImagePickerTar];
     self.imageManager = [[PHCachingImageManager alloc] init];
     [[PHPhotoLibrary sharedPhotoLibrary] registerChangeObserver:self];
     [self.collectionView registerClass:[XXBPhotoCollectionViewCell class] forCellWithReuseIdentifier:photoCollectionViewCell];
+    [self.collectionView registerClass:[XXBPhotoCollectionFootView class] forSupplementaryViewOfKind:UICollectionElementKindSectionFooter withReuseIdentifier:reuseFooterIdentifier];
     self.collectionView.backgroundColor = [UIColor colorWithRed:232/255.0 green:232/255.0 blue:232/255.0 alpha:1.0];
     self.collectionView.alwaysBounceVertical = YES;
+    self.collectionView.translatesAutoresizingMaskIntoConstraints = NO;
+    NSLayoutConstraint *collectionViewRight = [NSLayoutConstraint constraintWithItem:self.collectionView attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeRight multiplier:1.0 constant:0];
+    NSLayoutConstraint *collectionViewLeft = [NSLayoutConstraint constraintWithItem:self.collectionView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeLeft multiplier:1.0 constant:0];
+    NSLayoutConstraint *collectionViewBottom = [NSLayoutConstraint constraintWithItem:self.collectionView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeBottom multiplier:1.0 constant:-44];
+    NSLayoutConstraint *collectionViewTop = [NSLayoutConstraint constraintWithItem:self.collectionView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeTop multiplier:1.0 constant:0];
+    [self.view addConstraints:@[collectionViewLeft, collectionViewRight,collectionViewTop,collectionViewBottom]];
+
+}
+- (void)p_setupImagePickerTar
+{
+    XXBImagePickerTabr *imagePickerTar = [[XXBImagePickerTabr alloc] init];
+    [self.view addSubview:imagePickerTar];
+    imagePickerTar.translatesAutoresizingMaskIntoConstraints = NO;
+    
+    NSLayoutConstraint *imagePickerTarRight = [NSLayoutConstraint constraintWithItem:imagePickerTar attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeRight multiplier:1.0 constant:0];
+    NSLayoutConstraint *imagePickerTarLeft = [NSLayoutConstraint constraintWithItem:imagePickerTar attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeLeft multiplier:1.0 constant:0];
+    NSLayoutConstraint *imagePickerTarBottom = [NSLayoutConstraint constraintWithItem:imagePickerTar attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeBottom multiplier:1.0 constant:0];
+    NSLayoutConstraint *imagePickerTarHeight = [NSLayoutConstraint constraintWithItem:imagePickerTar attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:44];
+    [self.view addConstraints:@[imagePickerTarLeft, imagePickerTarRight,imagePickerTarBottom,imagePickerTarHeight]];
+    _imagePickerTar = imagePickerTar;
+    _imagePickerTar.delegate = self;
 }
 - (void)setAssetsFetchResults:(PHFetchResult *)assetsFetchResults
 {
@@ -108,9 +140,28 @@ static CGSize AssetGridThumbnailSize;
         }
     });
 }
+#pragma mark - XXBImagePickerTabrDelegate
 
+- (void)imagePickerTabrFinishClick
+{
+#warning todo 通知父控件点击了完成按钮
+}
 #pragma mark - UICollectionViewDataSource
-
+- (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath
+{
+    XXBPhotoCollectionFootView *reusableview = nil;
+    
+    if (kind == UICollectionElementKindSectionHeader){
+        
+    }
+    
+    if (kind == UICollectionElementKindSectionFooter){
+        
+        reusableview = [collectionView  dequeueReusableSupplementaryViewOfKind:UICollectionElementKindSectionFooter withReuseIdentifier:reuseFooterIdentifier forIndexPath:indexPath];
+        reusableview.photoCount = self.photoModleArray.count;
+    }
+    return reusableview;
+}
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
     NSInteger count = self.photoModleArray.count;
@@ -159,6 +210,7 @@ static CGSize AssetGridThumbnailSize;
         photoModel.index = self.selectPhotoModels.count;
     }
     [self.collectionView reloadData];
+    self.imagePickerTar.selectCount = self.selectPhotoModels.count;
 }
 #pragma mark - 添加照片
 - (void)handleAddButtonItem:(id)sender

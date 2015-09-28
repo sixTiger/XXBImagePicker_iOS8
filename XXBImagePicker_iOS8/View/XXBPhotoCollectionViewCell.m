@@ -13,11 +13,11 @@
 @interface XXBPhotoCollectionViewCell ()
 @property(nonatomic , weak)UIImageView          *imageView;
 @property(nonatomic , weak)XXBBadgeValueBtn     *badgeValueButton;
-@property(nonatomic , weak)UIButton *selectButton;
+@property(nonatomic , weak)UIButton             *selectButton;
 /**
  *  选中的时候的蒙版
  */
-@property(nonatomic , weak)UIImageView *selectCover;
+@property(nonatomic , weak)UIImageView          *selectCover;
 
 @end
 
@@ -29,6 +29,7 @@
     _photoModel.tag = self.tag;
     self.badgeValueButton.badgeValue = _photoModel.index;
     self.selectButton.selected = _photoModel.select ;
+    self.selectCover.hidden = !_photoModel.select;
     [self p_updateImageAsync];
 }
 - (void)p_updateImageAsync
