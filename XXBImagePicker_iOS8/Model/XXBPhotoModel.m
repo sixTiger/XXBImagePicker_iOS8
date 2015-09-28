@@ -9,5 +9,8 @@
 #import "XXBPhotoModel.h"
 
 @implementation XXBPhotoModel
-
+- (NSInteger)index
+{
+    return 0;
+}
 @end

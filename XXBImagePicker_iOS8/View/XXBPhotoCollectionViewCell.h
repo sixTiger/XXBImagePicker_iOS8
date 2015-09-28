@@ -8,7 +8,16 @@
 
 #import <UIKit/UIKit.h>
 @import Photos;
-@class XXBPhotoModel;
+@class XXBPhotoModel,XXBPhotoCollectionViewCell;
+
+@protocol XXBPhotoCollectionViewCellDelegate <NSObject>
+@optional
+- (void)photoCollectionViewCellSelectButtonDidclick:(XXBPhotoCollectionViewCell *)photoCollectionViewCell;
+
+@end
+
+
 @interface XXBPhotoCollectionViewCell : UICollectionViewCell
-@property(nonatomic , strong)XXBPhotoModel *photoModel;
+@property(nonatomic , weak)id<XXBPhotoCollectionViewCellDelegate>   delegate;
+@property(nonatomic , strong)XXBPhotoModel                          *photoModel;
 @end
