@@ -11,28 +11,6 @@
 #import "XXBPicShowViewController.h"
 #import "XXBPhotoCollectionViewCell.h"
 #import "XXBPhotoModel.h"
-
-//@implementation NSIndexSet (Convenience)
-//- (NSArray *)aapl_indexPathsFromIndexesWithSection:(NSUInteger)section {
-//    NSMutableArray *indexPaths = [NSMutableArray arrayWithCapacity:self.count];
-//    [self enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
-//        [indexPaths addObject:[NSIndexPath indexPathForItem:idx inSection:section]];
-//    }];
-//    return indexPaths;
-//}
-//@end
-//@implementation UICollectionView (Convenience)
-//- (NSArray *)aapl_indexPathsForElementsInRect:(CGRect)rect {
-//    NSArray *allLayoutAttributes = [self.collectionViewLayout layoutAttributesForElementsInRect:rect];
-//    if (allLayoutAttributes.count == 0) { return nil; }
-//    NSMutableArray *indexPaths = [NSMutableArray arrayWithCapacity:allLayoutAttributes.count];
-//    for (UICollectionViewLayoutAttributes *layoutAttributes in allLayoutAttributes) {
-//        NSIndexPath *indexPath = layoutAttributes.indexPath;
-//        [indexPaths addObject:indexPath];
-//    }
-//    return indexPaths;
-//}
-//@end
 @interface XXBPhotoCollectionViewController ()<PHPhotoLibraryChangeObserver>
 @property (strong) PHCachingImageManager *imageManager;
 @property CGRect previousPreheatRect;

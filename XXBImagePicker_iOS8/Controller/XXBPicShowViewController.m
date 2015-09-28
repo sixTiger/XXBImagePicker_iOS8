@@ -20,18 +20,6 @@
     return indexPaths;
 }
 @end
-@implementation UICollectionView (Convenience)
-- (NSArray *)aapl_indexPathsForElementsInRect:(CGRect)rect {
-    NSArray *allLayoutAttributes = [self.collectionViewLayout layoutAttributesForElementsInRect:rect];
-    if (allLayoutAttributes.count == 0) { return nil; }
-    NSMutableArray *indexPaths = [NSMutableArray arrayWithCapacity:allLayoutAttributes.count];
-    for (UICollectionViewLayoutAttributes *layoutAttributes in allLayoutAttributes) {
-        NSIndexPath *indexPath = layoutAttributes.indexPath;
-        [indexPaths addObject:indexPath];
-    }
-    return indexPaths;
-}
-@end
 @interface XXBPicShowViewController ()<PHPhotoLibraryChangeObserver,UICollectionViewDelegate,UICollectionViewDataSource,PHPhotoLibraryChangeObserver,XXBPicShowCollectionViewCellDelegate>
 @property (strong) PHCachingImageManager            *imageManager;
 

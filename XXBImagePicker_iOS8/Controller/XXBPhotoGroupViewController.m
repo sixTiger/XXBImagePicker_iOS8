@@ -89,6 +89,10 @@ static NSString *photoGroupViewCellID = @"XXBPhotoGroupViewCellID";
     {
         PHFetchOptions *options = [[PHFetchOptions alloc] init];
         options.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"creationDate" ascending:YES]];
+        /**
+         *  只要照片
+         */
+        [options setPredicate:[NSPredicate predicateWithFormat:@"mediaType == %d", PHAssetMediaTypeImage]];
         PHFetchResult *countResult = [PHAsset fetchAssetsWithOptions:options];
         PHAssetCollection *assetCollection = [PHAssetCollection transientAssetCollectionWithAssetFetchResult:countResult title:@"所有照片"];
         cell.assetCollection = assetCollection;
@@ -107,6 +111,10 @@ static NSString *photoGroupViewCellID = @"XXBPhotoGroupViewCellID";
     {
         PHFetchOptions *options = [[PHFetchOptions alloc] init];
         options.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"creationDate" ascending:YES]];
+        /**
+         *  只要照片
+         */
+        [options setPredicate:[NSPredicate predicateWithFormat:@"mediaType == %d", PHAssetMediaTypeImage]];
         PHFetchResult *countResult = [PHAsset fetchAssetsWithOptions:options];
         self.photoCollectionViewController.assetsFetchResults = countResult;
     }
