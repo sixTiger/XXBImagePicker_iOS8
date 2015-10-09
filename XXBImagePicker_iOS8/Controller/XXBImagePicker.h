@@ -61,20 +61,23 @@ typedef enum : NSUInteger {
  */
 @property(nonatomic , strong)NSMutableArray *selectPhotoModels;
 /**
- *  是否显示数字标签  默认是yes
+ *  是否显示数字标签              默认是yes
  */
 @property(nonatomic , assign)BOOL showPage;
 /**
- *  是否默认显示所有的相册
+ *  是否默认显示所有的相册         默认是YES
  */
 @property(nonatomic , assign)BOOL showAllPhoto;
 /**
- *  最多可选的照片的张数
+ *  最多可选的照片的张数           默认是99
  */
 @property(nonatomic , assign)NSInteger photoCount;
 /**
  *  用来处理选中和和取消的代理方法
  */
 @property(nonatomic , weak)id<XXBImagePickerDelegate> imagePickerDelegate;
+/**
+ *  返回的photoModel的排序方式    默认是按照点的顺序
+ */
 @property(nonatomic , assign)XXBPhotoSortType photoSortType;
 @end

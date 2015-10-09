@@ -11,7 +11,7 @@
 #import "XXBPhotoCollectionViewController.h"
 #import <Photos/Photos.h>
 #import "XXBPhotoGroupModel.h"
-@interface XXBPhotoGroupViewController ()<PHPhotoLibraryChangeObserver,XXBPhotoCollectionViewControllerDelegate>
+@interface XXBPhotoGroupViewController ()<PHPhotoLibraryChangeObserver,XXBPhotoCollectionViewControllerDelegate,UITableViewDelegate,UITableViewDataSource>
 {
     NSInteger _photoInRow;
 }
@@ -41,6 +41,8 @@
  */
 @property(nonatomic , strong)NSArray                                    *photoRealSectionArray;
 
+@property(nonatomic , weak) UITableView  *tableView;
+@property(nonatomic , weak) UILabel                                     *messageLabel;
 @end
 
 @implementation XXBPhotoGroupViewController
@@ -60,6 +62,8 @@ static NSString *photoGroupViewCellID = @"XXBPhotoGroupViewCellID";
 - (void)p_setup
 {
     [self setupItems];
+    [self p_setupTableView];
+    [self p_setupMessageLabel];
     [self p_excludeEmptyCollections];
     [self p_creatPhotoSectionModelArray];
     [self.tableView registerClass:[XXBPhotoGroupTableViewCell class] forCellReuseIdentifier:photoGroupViewCellID];
@@ -102,6 +106,7 @@ static NSString *photoGroupViewCellID = @"XXBPhotoGroupViewCellID";
 {
     self.photoCollectionViewController.photoGroupModel = self.photoSectionModelArray[indexPath.section ][indexPath.row];
     [self.navigationController pushViewController:self.photoCollectionViewController animated:YES];
+    [self.photoCollectionViewController scrollToBottom];
 }
 #pragma mark - PHPhotoLibraryChangeObserver
 
@@ -282,5 +287,35 @@ static NSString *photoGroupViewCellID = @"XXBPhotoGroupViewCellID";
         self.photoSectionTitles = @[@"所有照片",@"系统相册",@"个人相册"];
     }
     return _photoSectionTitles;
+}
+
+- (void)p_setupTableView
+{
+    if (_tableView)
+        return;
+    UITableView *tableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStylePlain];
+    tableView.autoresizingMask = (1 << 6) - 1;
+    tableView.delegate = self;
+    tableView.dataSource = self;
+    _tableView = tableView;
+    [self.view addSubview:tableView];
+}
+- (void)p_setupMessageLabel
+{
+    if (self.messageLabel)
+        return;
+    UILabel *messageLabel = [UILabel new];
+    _messageLabel = messageLabel;
+    [self.view addSubview:_messageLabel];
+    messageLabel.numberOfLines = 0;
+    messageLabel.text = @"请在iPhone的“设置-隐私-照片”选项中，允许应用访问你的手机相册";
+    messageLabel.textAlignment = NSTextAlignmentCenter;
+    
+    self.messageLabel.translatesAutoresizingMaskIntoConstraints = NO;
+    
+    NSLayoutConstraint *messageLabelRight = [NSLayoutConstraint constraintWithItem:messageLabel attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeRight multiplier:1.0 constant:-20];
+    NSLayoutConstraint *messageLabelLeft = [NSLayoutConstraint constraintWithItem:messageLabel attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeLeft multiplier:1.0 constant:20];
+    NSLayoutConstraint *messageLabelTop = [NSLayoutConstraint constraintWithItem:messageLabel attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeTop multiplier:1.0 constant:104];
+    [self.view addConstraints:@[messageLabelLeft, messageLabelRight,messageLabelTop]];
 }
 @end

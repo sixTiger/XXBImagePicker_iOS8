@@ -18,8 +18,16 @@
 {
     if (self = [super initWithRootViewController:self.photoGroupViewController])
     {
+        [self p_setImagePick];
     }
     return self;
+}
+- (void)p_setImagePick
+{
+    
+    self.showPage = YES;
+    self.showAllPhoto = YES;
+    self.photoCount = 99;
 }
 - (XXBPhotoGroupViewController *)photoGroupViewController
 {
@@ -37,6 +45,17 @@
     {
         [self.imagePickerDelegate imagePickerControllerCancleselect:self];
     }
+}
+#pragma mark ---
+- (void)setShowPage:(BOOL)showPage
+{
+    _showPage = showPage;
+    self.photoGroupViewController.showPage = _showPage;
+}
+- (void)setShowAllPhoto:(BOOL)showAllPhoto
+{
+    _showAllPhoto = showAllPhoto;
+    self.photoGroupViewController.showAllPhoto = _showAllPhoto;
 }
 - (void)photoGroupViewController:(XXBPhotoGroupViewController *)photoGroupView didselectPhotos:(NSArray *)selectPhotos
 {

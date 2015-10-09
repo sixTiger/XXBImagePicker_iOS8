@@ -39,4 +39,7 @@
  *  代理
  */
 @property(nonatomic , weak)id<XXBPhotoCollectionViewControllerDelegate> delegate;
+
+
+- (void)scrollToBottom;
 @end

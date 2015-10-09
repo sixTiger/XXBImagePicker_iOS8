@@ -75,7 +75,12 @@ static CGSize AssetGridThumbnailSize;
     _imagePickerTar = imagePickerTar;
     _imagePickerTar.delegate = self;
 }
-
+- (void)scrollToBottom
+{
+    if (self.photoGroupModel.photoModelArray.count == 0)
+        return;
+    [self.collectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForRow:self.photoGroupModel.photoModelArray.count - 1 inSection:0] atScrollPosition:UICollectionViewScrollPositionTop animated:NO];
+}
 #pragma mark - XXBImagePickerTabrDelegate
 
 - (void)imagePickerTabrFinishClick

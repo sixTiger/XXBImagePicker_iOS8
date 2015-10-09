@@ -24,7 +24,7 @@
  */
 - (void)photoGroupViewControllerCancleSelected:(XXBPhotoGroupViewController *)photoGroupView;
 @end
-@interface XXBPhotoGroupViewController : UITableViewController
+@interface XXBPhotoGroupViewController : UIViewController
 /**
  *  一行显示的照片个数
  *  默认是4个

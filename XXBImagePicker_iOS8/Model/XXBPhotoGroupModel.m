@@ -11,8 +11,6 @@
 @implementation XXBPhotoGroupModel
 - (void)setAssetCollection:(PHAssetCollection *)assetCollection
 {
-
-    NSLog(@"%@ ----- %@",[PHAssetCollection class],[assetCollection class]);
     _assetCollection = assetCollection;
     PHFetchResult *countResult = [PHAsset fetchAssetsInAssetCollection:_assetCollection options:nil];
     NSMutableArray *array = [NSMutableArray array];
