@@ -61,7 +61,7 @@ typedef enum : NSUInteger {
  */
 @property(nonatomic , strong)NSMutableArray *selectPhotoModels;
 /**
- *  是否显示数字标签
+ *  是否显示数字标签  默认是yes
  */
 @property(nonatomic , assign)BOOL showPage;
 /**

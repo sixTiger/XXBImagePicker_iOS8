@@ -32,6 +32,9 @@
     self.selectCover.hidden = !_photoModel.select;
     [self p_updateImageAsync];
 }
+/**
+ * 异步的方法更新image
+ */
 - (void)p_updateImageAsync
 {
     self.imageView.image = nil;
@@ -69,7 +72,7 @@
     
 }
 /**
- *  更新照片
+ *  同步 更新照片
  */
 - (void)p_updateImageSync
 {
@@ -87,7 +90,7 @@
         XXBPhotoModel *photoModel = self.photoModel;
         
         PHImageRequestOptions *option = [[PHImageRequestOptions alloc] init];
-        //        option.deliveryMode = PHImageRequestOptionsDeliveryModeOpportunistic;
+        option.deliveryMode = PHImageRequestOptionsDeliveryModeOpportunistic;
         option.synchronous = YES;
         __weak typeof(self) weakSelf = self;
         [[PHImageManager defaultManager] requestImageForAsset:self.photoModel.asset
@@ -150,8 +153,9 @@
     if (_selectButton == nil)
     {
         //右上角的小图标的尺寸
-        CGFloat width = 40;
+        CGFloat width = 30;
         UIButton *selectButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        selectButton.imageEdgeInsets = UIEdgeInsetsMake(7, 7, 0, 0);
         selectButton.frame = CGRectMake(self.bounds.size.width - width, self.bounds.size.width - width , width , width);
         [self.contentView insertSubview:selectButton aboveSubview:self.contentView];
         [selectButton setImage:[UIImage imageNamed:@"XXBImagePicker.bundle/XXBPhoto"] forState:UIControlStateNormal];

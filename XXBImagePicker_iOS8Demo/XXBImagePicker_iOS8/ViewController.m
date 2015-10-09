@@ -9,6 +9,8 @@
 #import "ViewController.h"
 #import "XXBImagePicker.h"
 #import "MBProgressHUD+XXB.h"
+#import "XXBPhotoModel.h"
+#import <Photos/Photos.h>
 
 @interface ViewController ()<XXBImagePickerDelegate,UICollectionViewDataSource,UICollectionViewDelegate>
 @property(nonatomic , weak)UICollectionView *collectionView;
@@ -55,15 +57,10 @@
 {
     [MBProgressHUD showMessage:@"正在加载照片" toView:self.collectionView];
     [self.photoArray removeAllObjects];
+    [self.photoArray addObjectsFromArray:selectPhotos];
     [imagePickController dismissViewControllerAnimated:YES completion:^{
-//        for (int i = 0; i < selectPhotos.count; i ++)
-//        {
-//            //不知第一张或者最后一张
-//            [self.photoArray addObject: [[XXBHelpTools sharedXXBHelpTools] thumbnailForAsset:[selectPhotos[i] photoAlaset] maxPixelSize:1024 * 2]];
-//        }
         [MBProgressHUD hideAllHUDsForView:self.collectionView animated:YES];
         [self.collectionView reloadData];
-        
         [self.view bringSubviewToFront:self.collectionView];
     }];
 }
@@ -81,7 +78,7 @@
         layout.scrollDirection =  UICollectionViewScrollDirectionHorizontal;
         layout.sectionInset = UIEdgeInsetsMake(84, 10, 20, 10);
         UICollectionView *collectionView  = [[UICollectionView alloc] initWithFrame:self.view.bounds collectionViewLayout:layout];
-        
+        collectionView.backgroundColor = [UIColor yellowColor];
         collectionView.delegate = self;
         collectionView.dataSource = self;
         [collectionView registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:@"cell"];
@@ -102,8 +99,20 @@
     UICollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"cell" forIndexPath:indexPath];
     UIImageView *imageView = [[UIImageView alloc]initWithFrame:cell.bounds];
     cell.backgroundView = imageView;
-    imageView.image = self.photoArray[indexPath.row];
     imageView.contentMode = UIViewContentModeScaleToFill;
+    
+    XXBPhotoModel *photoModel = self.photoArray[indexPath.row];
+    
+    PHImageRequestOptions *options = [[PHImageRequestOptions alloc] init];
+    // Download from cloud if necessary
+    options.networkAccessAllowed = YES;
+    options.progressHandler = ^(double progress, NSError *error, BOOL *stop, NSDictionary *info) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+        });
+    };
+    [[PHImageManager defaultManager] requestImageDataForAsset:photoModel.asset options:options resultHandler:^(NSData *imageData, NSString *dataUTI, UIImageOrientation orientation, NSDictionary *info) {
+        imageView.image = [UIImage imageWithData:imageData];
+    }];
     return cell;
 }
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
